@@ -1,0 +1,105 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:keepScreenOn="true"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ToggleButton
+        android:id="@+id/button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="ToggleButton" >
+    </ToggleButton>
+
+    <TextView
+        android:id="@+id/xTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="x" />
+
+    <TextView
+        android:id="@+id/yTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="y" />
+    
+    <TextView
+        android:id="@+id/thetaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="theta" />
+     
+    <TextView
+        android:id="@+id/thetawTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="thetaw" />
+    
+    <TextView
+        android:id="@+id/CurWPTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="CurWP" />
+    
+    <TextView
+        android:id="@+id/azimuthTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="azimuth" />
+    
+    <TextView
+        android:id="@+id/pitchTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="pitch" />
+
+    <TextView
+        android:id="@+id/rollTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="roll" />
+
+    <TextView
+        android:id="@+id/utcTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="utc" />
+
+    <TextView
+        android:id="@+id/latTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="lat" />
+
+    <TextView
+        android:id="@+id/longTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="long" />
+
+    <TextView
+        android:id="@+id/altTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="alt" />
+
+    <TextView
+        android:id="@+id/speedTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="speed" />
+
+    <TextView
+        android:id="@+id/bearingTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="bearing" />
+
+    <TextView
+        android:id="@+id/nmeaTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="NMEA" />
+
+</LinearLayout>

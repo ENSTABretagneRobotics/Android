@@ -1,0 +1,37 @@
+tester régulation en cap et suivi de gps
+focus ioiosrv
+reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
+AppNativeQuit() ne fait que déconnecter le client courant, ça ne stoppe pas le serveur...
+
+renommer ASLogger en INSLog?
+renommer test en autre chose (test airspeed and airpressure, altimeter...)
+la recherche du # et \r marche peut-être pas à tous les coups...
+ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?
+
+proxy android? ioio avec android > 4.1.2? problème GPS (faut aller dehors?) et caméra htc (VGA non supporté?), restaurer? galaxy s brické?
+
+ASLogger
+les données ne sont pas toujours rangées dans l'ordre du temps UTC? appli lancée à moitié plusieurs fois?
+Pas d'en-tête sur S3 Mini?
+difficile d'être sûr que les nombres seront bien dans le format 111111111.111 à cause des locales (séparateur décimal, séparateur milliers...)
+les start/stop provoquent ralentissements à la fin... semble être lié à new PrintWriter(new BufferedWriter(new FileWriter(file, true)))
+
+C peut être compilé avec Code Sourcery arm-none-linux-gnueabi, compiler en static pour que ça puisse utiliser glibc car avec NDK ily a bionic à la place de glibc...
+
+regarder threads ou autre de thibault, timer dans dossier android/smarttracker
+timer ou Runnable and h2 Handler?
+
+peut-être pas utiliser le LocationManager.NETWORK_PROVIDER quand on sait qu'on a le GPS au cas où il enverrait de temps en temps des positions imprécises
+
+pourquoi dans buggy le fait de déplacer le nmeatextview en bas fait tout planter?
+
+
+
+OLD
+
+ASAHRSSrv : quand le smartphone reste éteint pendant quelques minutes avec le programme actif en bg, le cap semble diverger, il redevient bon si on rallume l'écran (même sans déverrouiller), est-ce que la boussole est éteinte? 
+GPSStatus semble aussi avoir plusieurs influences, faut-il le laisser en fg pour que tout marche?
+->il vaut mieux tout faire pour que l'écran reste allumé, il est possible que les drivers des capteurs prennent ça en compte pour se mettre en veille dans tous les cas...
+
+ralentissement et plantage au bout d'un certain temps et il semble que l'appli redémarre... redémarrage de l'appli lors des basculements de l'écran et ralentissemets provoqués par ça, il faut désactiver orientation?
+faire timer qui enregistre dans un fichier toutes les données : smarttracker
