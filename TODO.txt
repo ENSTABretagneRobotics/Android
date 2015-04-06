@@ -1,12 +1,11 @@
 tester régulation en cap et suivi de gps
-focus ioiosrv
+ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?
 reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
 AppNativeQuit() ne fait que déconnecter le client courant, ça ne stoppe pas le serveur...
 
 renommer ASLogger en INSLog?
 renommer test en autre chose (test airspeed and airpressure, altimeter...)
 la recherche du # et \r marche peut-être pas à tous les coups...
-ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?
 
 proxy android? ioio avec android > 4.1.2? problème GPS (faut aller dehors?) et caméra htc (VGA non supporté?), restaurer? galaxy s brické?
 
