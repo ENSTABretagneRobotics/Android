@@ -11,10 +11,10 @@ OPENCV_MK_PATH := ..\OpenCV-2.4.9-android-sdk\sdk\native\jni
 include $(OPENCV_MK_PATH)/OpenCV.mk
 
 LOCAL_MODULE := appnativecpp_opencv_jni
-LOCAL_SRC_FILES := appnative.cpp Main.c Globals.c OSNet.c OSMisc.c OSTime.c OSCore.c
+LOCAL_SRC_FILES := appnative.cpp Main.c Globals.c OSNet.c OSCriticalSection.c OSThread.c OSMisc.c OSTime.c OSCore.c
 LOCAL_LDLIBS += -llog -ldl
 
 # -x c++ because of OpenCV...
-LOCAL_CFLAGS += -Wall -Wextra -DDISABLE_GUI_REMOTEWEBCAMSRV -x c++
+LOCAL_CFLAGS += -Wall -Wextra -DDISABLE_GUI_REMOTEWEBCAMMULTISRV -DDISABLE_TIMER_RECORDING -DOPENCV249 -x c++
 
 include $(BUILD_SHARED_LIBRARY)

@@ -24,6 +24,7 @@ Version status : Not finished
 #ifdef _MSC_VER
 // Disable some Visual Studio warnings that happen sometimes in OpenCV.
 #pragma warning(disable : 4100) 
+#pragma warning(disable : 4458) 
 #pragma warning(disable : 4996)
 #pragma warning(disable : 6204)
 #pragma warning(disable : 6201)
@@ -38,18 +39,29 @@ Version status : Not finished
 
 #ifdef __GNUC__
 // Disable some GCC warnings that happen sometimes in OpenCV.
+//#pragma GCC diagnostic ignored "-Wunused-parameter"
+//#pragma GCC diagnostic ignored "-Wunused-variable"
+//#pragma GCC diagnostic ignored "-Wunused-value"
 #pragma GCC diagnostic ignored "-Wunused-function"
-#if (__GNUC__) > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+//#pragma GCC diagnostic ignored "-Wunused"
+//#pragma GCC diagnostic ignored "-Wunused"
+//#pragma GCC diagnostic ignored "-Wcomment"
+//#pragma GCC diagnostic ignored "-Wuninitialized"
+//#pragma GCC diagnostic ignored "-Wunknown-pragmas"
+#if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #pragma GCC diagnostic push
-#endif // #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#else
+//#pragma GCC diagnostic ignored "-Wpragmas"
+#endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #endif // __GNUC__
 
 // OpenCV headers.
-#if defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV243)
+#if defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249)
 //#include "opencv/cv.h" // Sometimes cause strange errors in debug and C++ mode due to the redefinition of free()...
 #include "opencv/cvwimage.h"
 #include "opencv/cxcore.h"
 #include "opencv/highgui.h"
+#include "opencv2/imgproc/imgproc_c.h"
 // The following headers do not build in C mode.
 #ifdef __cplusplus
 #include "opencv/cvaux.h"
@@ -69,13 +81,24 @@ Version status : Not finished
 #include "cv.h"
 #include "cvaux.h"
 #include "highgui.h"
-#endif // defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV243)
+#endif // defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249)
 
 #ifdef __GNUC__
 // Restore the GCC warnings previously disabled for OpenCV.
-#if (__GNUC__) > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #pragma GCC diagnostic pop
-#endif // #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+#else
+//#pragma GCC diagnostic warning "-Wpragmas"
+//#pragma GCC diagnostic warning "-Wunknown-pragmas"
+//#pragma GCC diagnostic warning "-Wuninitialized"
+//#pragma GCC diagnostic warning "-Wcomment"
+//#pragma GCC diagnostic warning "-Wunused"
+//#pragma GCC diagnostic warning "-Wunused"
+#pragma GCC diagnostic warning "-Wunused-function"
+//#pragma GCC diagnostic warning "-Wunused-value"
+//#pragma GCC diagnostic warning "-Wunused-variable"
+//#pragma GCC diagnostic warning "-Wunused-parameter"
+#endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #endif // __GNUC__
 
 #ifdef __BORLANDC__
@@ -90,6 +113,7 @@ Version status : Not finished
 #pragma warning(default : 6201)
 #pragma warning(default : 6204)
 #pragma warning(default : 4996)
+#pragma warning(default : 4458) 
 #pragma warning(default : 4100) 
 #endif // _MSC_VER
 

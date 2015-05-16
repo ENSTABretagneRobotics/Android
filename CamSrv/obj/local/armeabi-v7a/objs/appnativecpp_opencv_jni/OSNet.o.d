@@ -58,6 +58,9 @@ obj/local/armeabi-v7a/objs/appnativecpp_opencv_jni/OSNet.o: jni/OSNet.c \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/sysconf.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/linux/capability.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/pathconf.h \
+ jni/OSThread.h \
+ C:/android-ndk/platforms/android-8/arch-arm/usr/include/pthread.h \
+ C:/android-ndk/platforms/android-8/arch-arm/usr/include/sched.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/socket.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/linux/socket.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm/socket.h \
@@ -202,6 +205,12 @@ C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/sysconf.h:
 C:/android-ndk/platforms/android-8/arch-arm/usr/include/linux/capability.h:
 
 C:/android-ndk/platforms/android-8/arch-arm/usr/include/pathconf.h:
+
+jni/OSThread.h:
+
+C:/android-ndk/platforms/android-8/arch-arm/usr/include/pthread.h:
+
+C:/android-ndk/platforms/android-8/arch-arm/usr/include/sched.h:
 
 C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/socket.h:
 

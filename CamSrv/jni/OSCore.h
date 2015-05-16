@@ -93,16 +93,28 @@ _ Windows CE : WINCE
 //#	ifndef _CRT_NONSTDC_NO_WARNINGS
 //#		define _CRT_NONSTDC_NO_WARNINGS
 //#	endif // _CRT_NONSTDC_NO_WARNINGS
+
 // To avoid compiler warnings about functions compiled as native code (if CLR).
 #	if defined(__cplusplus) && defined(_M_CEE)
 #		pragma warning(disable : 4793)
 #	endif // defined(__cplusplus) && defined(_M_CEE)
+
+// Since probably Visual Studio 2012, it is forbidden to define inline even in C while it is only available in C++.
+// _ALLOW_KEYWORD_MACROS allows to bypass this check (see xkeycheck.h).
+// This should be changed if inline become a C keyword in future versions of Visual Studio.
+#	ifndef __cplusplus
+#		ifndef _ALLOW_KEYWORD_MACROS
+#			define _ALLOW_KEYWORD_MACROS
+#		endif // _ALLOW_KEYWORD_MACROS
+#	endif // __cplusplus
+
 // Enable additional features in math.h.
 #	ifndef _USE_MATH_DEFINES
 #		define _USE_MATH_DEFINES
 #	endif // _USE_MATH_DEFINES
-#	if defined(_DEBUG) && !defined(DISABLE_ADDITIONAL_DEBUG_FEATURES)
+
 // Enable additional debug features for malloc functions.
+#	if defined(_DEBUG) && !defined(DISABLE_ADDITIONAL_DEBUG_FEATURES)
 #		ifndef _CRTDBG_MAP_ALLOC
 #			define _CRTDBG_MAP_ALLOC
 #		endif // _CRTDBG_MAP_ALLOC
@@ -130,13 +142,13 @@ _ Windows CE : WINCE
 // To fix...
 
 #pragma GCC diagnostic ignored "-Wwrite-strings"
-//#if (__GNUC__) > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+//#if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 //#pragma GCC diagnostic push
-//#endif // #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+//#endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 //
-//#if (__GNUC__) > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+//#if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 //#pragma GCC diagnostic pop
-//#endif // #if __GNUC__ > 4 || (__GNUC__ == 4 && __GNUC_MINOR__ >= 6)
+//#endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 
 #endif // __GNUC__
 
@@ -213,6 +225,7 @@ _ Windows CE : WINCE
 #endif // EXTERN_C
 
 #ifndef __cplusplus
+#ifndef inline
 #ifdef _MSC_VER
 #define inline __inline
 #endif // _MSC_VER
@@ -223,6 +236,7 @@ _ Windows CE : WINCE
 // extern __inline__ in ws2tcpip.h for GNU?
 #define inline static __inline__
 #endif // __GNUC__
+#endif // inline
 #endif // __cplusplus
 
 #if !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
@@ -278,13 +292,13 @@ typedef double DOUBLE;
 #endif // WINCE
 
 #ifndef _WIN32
-#ifndef ZeroMemory
+//#ifndef ZeroMemory
 #define ZeroMemory(Destination,Length) memset((Destination),0,(Length))
-#endif // ZeroMemory
+//#endif // ZeroMemory
 typedef void* HANDLE;
-#ifndef INVALID_HANDLE_VALUE
+//#ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE ((HANDLE)-1)
-#endif // INVALID_HANDLE_VALUE
+//#endif // INVALID_HANDLE_VALUE
 typedef int                 BOOL;
 #ifndef FALSE
 #define FALSE               0
