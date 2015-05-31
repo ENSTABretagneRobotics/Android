@@ -20,6 +20,8 @@ public class MainActivity extends Activity {
 	private Button stopButton;
 	private TextView infoTextView;
 
+	private Intent i;
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -38,15 +40,7 @@ public class MainActivity extends Activity {
 		stopButton = (Button) findViewById(R.id.stopButton);
 		infoTextView = (TextView) findViewById(R.id.infoTextView);
 
-		final Intent i = new Intent(MainActivity.this, AppNativeService.class);
-
-		infoTextView.setText("STARTING...");
-		i.setAction("START");
-		startService(i);
-		infoTextView.setText("STARTED");
-
-		// AppNativeQuit() does not seem to be able to stop the native
-		// code...
+		i = new Intent(MainActivity.this, AppNativeService.class);
 
 		startButton.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
@@ -68,6 +62,33 @@ public class MainActivity extends Activity {
 				infoTextView.setText("STOPPED");
 			}
 		});
+
+		infoTextView.setText("STARTING...");
+		i.setAction("START");
+		startService(i);
+		infoTextView.setText("STARTED");
+
+		// AppNativeQuit() does not seem to be able to stop the native
+		// code...
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy(); // Always call the superclass method first.
+
+		// Cannot stop service properly...
+		
+//		infoTextView.setText("STOPPING...");
+//		i.setAction("STOP");
+//		stopService(i);
+//		try {
+//			Thread.sleep(15000);
+//		} catch (InterruptedException e) {
+//		}
+//		infoTextView.setText("STOPPED");		
+		
+		pwl.release();
+		sdwl.release();
 	}
 
 	@Override

@@ -28,13 +28,15 @@ public class MainActivity extends Activity {
 	private PowerManager.WakeLock pwl;
 
 	private LocationManager locationManager;
+	private GpsStatus.NmeaListener nmeaListener;
+	private LocationListener locationListener;
 
-	private long utcMilliTime;
-	private double latitude;
-	private double longitude;
-	private double altitude;
-	private double speed;
-	private double bearing;
+	long utcMilliTime;
+	double latitude;
+	double longitude;
+	double altitude;
+	double speed;
+	double bearing;
 
 	String previousdata;
 	String latestdata;
@@ -58,7 +60,7 @@ public class MainActivity extends Activity {
 
 		// Define a listener that responds to NMEA updates. NMEA is the
 		// low-level GPS protocol.
-		GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
+		nmeaListener = new GpsStatus.NmeaListener() {
 			public void onNmeaReceived(long timestamp, String nmea) {
 				latestdata = nmea;
 			}
@@ -68,7 +70,7 @@ public class MainActivity extends Activity {
 		locationManager.addNmeaListener(nmeaListener);
 
 		// Define a listener that responds to location updates.
-		LocationListener locationListener = new LocationListener() {
+		locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
 				// Called when a new location is found by the location provider.
 			}
@@ -93,6 +95,19 @@ public class MainActivity extends Activity {
 		latestdata = "";
 
 		new NetworkTask().execute("");
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy(); // Always call the superclass method first.
+
+		// Cannot destroy NetworkTask properly, however it should fail
+		// immediately if started twice...
+
+		locationManager.removeUpdates(locationListener);
+		locationManager.removeNmeaListener(nmeaListener);
+		pwl.release();
+		sdwl.release();
 	}
 
 	@Override
@@ -258,14 +273,11 @@ public class MainActivity extends Activity {
 			switch (iResult)
 			{
 			case EXIT_SUCCESS:
-				if (handlecli(param) != EXIT_SUCCESS)
-				{
-					System.out.println("LaunchSingleCliTCPSrv warning : Error while communicating with the client. ");
+				if (handlecli(param) != EXIT_SUCCESS) {
+					System.out.println("LaunchSingleCliTCPSrv warning : Error while communicating with a client. ");
 				}
-				if (disconnectclifromtcpsrv() != EXIT_SUCCESS)
-				{
-					releasetcpsrv();
-					return EXIT_FAILURE;
+				if (disconnectclifromtcpsrv() != EXIT_SUCCESS) {
+					System.out.println("LaunchSingleCliTCPSrv warning : Error disconnecting a client. ");
 				}
 				break;
 			case EXIT_TIMEOUT:

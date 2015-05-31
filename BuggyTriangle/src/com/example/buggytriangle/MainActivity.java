@@ -29,6 +29,7 @@ import android.os.Environment;
 import android.os.Handler;
 import android.os.PowerManager;
 import android.provider.Settings;
+import android.view.Menu;
 import android.widget.TextView;
 import android.widget.ToggleButton;
 
@@ -47,29 +48,33 @@ public class MainActivity extends IOIOActivity {
 	private PowerManager.WakeLock pwl;
 
 	private ToggleButton button_;
-	public int pw1 = 1500;
-	public int pw2 = 1500;
-	public int pw3 = 1500;
+	int pw1 = 1500;
+	int pw2 = 1500;
+	int pw3 = 1500;
 
 	private LocationManager locationManager;
+	private GpsStatus.NmeaListener nmeaListener;
+	private GpsStatus.Listener gpsStatusListener;
+	private LocationListener locationListener;
 	private SensorManager sensorManager;
 	private Sensor orientation;
+	private SensorEventListener orientationListener;
 
 	Timer updateTimer;
 
-	public double latitude = 0;
-	public double longitude = 0;
-	public double azimuth = 0;
+	double latitude = 0;
+	double longitude = 0;
+	double azimuth = 0;
 
-	public double x = 0;
-	public double y = 0;
-	public double theta = 0;
-	public double u1 = 0;
-	public double u2 = 0;
-	public double thetaw = 0;
-	public double uw = 0;
-	public double xw = 0;
-	public double yw = 0;
+	double x = 0;
+	double y = 0;
+	double theta = 0;
+	double u1 = 0;
+	double u2 = 0;
+	double thetaw = 0;
+	double uw = 0;
+	double xw = 0;
+	double yw = 0;
 
 	GPSPoint[] waypoints;
 	GPSPoint gps0;
@@ -99,7 +104,7 @@ public class MainActivity extends IOIOActivity {
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
 		// Define a listener that responds to NMEA updates
-		GpsStatus.NmeaListener nmeaListener = new GpsStatus.NmeaListener() {
+		nmeaListener = new GpsStatus.NmeaListener() {
 			public void onNmeaReceived(long timestamp, String nmea) {
 				TextView nmeaTextView = (TextView) findViewById(R.id.nmeaTextView);
 				nmeaTextView.setText(nmea);
@@ -128,7 +133,7 @@ public class MainActivity extends IOIOActivity {
 		locationManager.addNmeaListener(nmeaListener);
 
 		// Define a listener
-		GpsStatus.Listener gpsStatusListener = new GpsStatus.Listener() {
+		gpsStatusListener = new GpsStatus.Listener() {
 			public void onGpsStatusChanged(int event) {
 			}
 		};
@@ -137,7 +142,7 @@ public class MainActivity extends IOIOActivity {
 		locationManager.addGpsStatusListener(gpsStatusListener);
 
 		// Define a listener that responds to location updates
-		LocationListener locationListener = new LocationListener() {
+		locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
 				TextView utcTextView = (TextView) findViewById(R.id.utcTextView);
 				utcTextView.setText(String.valueOf(location.getTime()));
@@ -184,7 +189,7 @@ public class MainActivity extends IOIOActivity {
 		orientation = sensorManager.getDefaultSensor(Sensor.TYPE_ORIENTATION);
 
 		// Define a listener that responds to location updates
-		SensorEventListener orientationListener = new SensorEventListener() {
+		orientationListener = new SensorEventListener() {
 			public void onSensorChanged(SensorEvent event) {
 				TextView azimuthTextView = (TextView) findViewById(R.id.azimuthTextView);
 				azimuthTextView.setText(String.valueOf(event.values[0]));
@@ -246,6 +251,27 @@ public class MainActivity extends IOIOActivity {
 
 		updateTimer = new Timer();
 		updateTimer.schedule(new updateTask(new Handler(), this), 0, 50);
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy(); // Always call the superclass method first.
+
+		updateTimer.cancel();
+
+		sensorManager.unregisterListener(orientationListener);
+		locationManager.removeUpdates(locationListener);
+		locationManager.removeGpsStatusListener(gpsStatusListener);
+		locationManager.removeNmeaListener(nmeaListener);
+		pwl.release();
+		sdwl.release();
+	}
+	
+	@Override
+	public boolean onCreateOptionsMenu(Menu menu) {
+		// Inflate the menu; this adds items to the action bar if it is present.
+		getMenuInflater().inflate(R.menu.activity_main, menu);
+		return true;
 	}
 
 	@Override
@@ -485,17 +511,23 @@ public class MainActivity extends IOIOActivity {
 		GPS2RefCoordSystem(gps0, gpsb, posb);
 	}
 
-	/**
-	 * Dialog to prompt users to enable GPS on the device.
-	 */
-	/*
-	 * public class EnableGpsDialogFragment extends DialogFragment {
-	 * 
-	 * @Override public Dialog onCreateDialog(Bundle savedInstanceState) {
-	 * return new AlertDialog.Builder(getActivity())
-	 * .setTitle("Check GPS status") .setMessage("Check GPS status")
-	 * .setPositiveButton("Check GPS status", new
-	 * DialogInterface.OnClickListener() { public void onClick(DialogInterface
-	 * dialog, int which) { enableLocationSettings(); } }) .create(); } }
-	 */
+//	/**
+//	 * Dialog to prompt users to enable GPS on the device.
+//	 */
+//	public class EnableGpsDialogFragment extends DialogFragment {
+//
+//		@Override
+//		public Dialog onCreateDialog(Bundle savedInstanceState) {
+//			return new AlertDialog.Builder(getActivity())
+//					.setTitle("Check GPS status")
+//					.setMessage("Check GPS status")
+//					.setPositiveButton("Check GPS status",
+//							new DialogInterface.OnClickListener() {
+//								public void onClick(DialogInterface dialog,
+//										int which) {
+//									enableLocationSettings();
+//								}
+//							}).create();
+//		}
+//	}
 }

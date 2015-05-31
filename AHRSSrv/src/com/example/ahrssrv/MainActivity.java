@@ -28,22 +28,25 @@ public class MainActivity extends Activity {
 	
 	private SensorManager sensorManager;
 	private Sensor orientation;
+	private SensorEventListener orientationListener;
 	private Sensor gyroscope;
+	private SensorEventListener gyroscopeListener;
 	private Sensor accelerometer;
+	private SensorEventListener accelerometerListener;
 
-	private long systemNanoTime;
+	long systemNanoTime;
 
-	private double azimuth;
-	private double pitch;
-	private double roll;
+	double azimuth;
+	double pitch;
+	double roll;
 
-	private double gyrx;
-	private double gyry;
-	private double gyrz;
+	double gyrx;
+	double gyry;
+	double gyrz;
 
-	private double accx;
-	private double accy;
-	private double accz;
+	double accx;
+	double accy;
+	double accz;
 
 	String previousdata;
 	String latestdata;
@@ -73,7 +76,7 @@ public class MainActivity extends Activity {
 				.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
 
 		// Define a listener that responds to orientation updates.
-		SensorEventListener orientationListener = new SensorEventListener() {
+		orientationListener = new SensorEventListener() {
 			public void onSensorChanged(SensorEvent event) {
 				systemNanoTime = System.nanoTime();
 				azimuth = event.values[0];
@@ -100,7 +103,7 @@ public class MainActivity extends Activity {
 				SensorManager.SENSOR_DELAY_NORMAL);
 
 		// Define a listener that responds to gyroscope updates.
-		SensorEventListener gyroscopeListener = new SensorEventListener() {
+		gyroscopeListener = new SensorEventListener() {
 			public void onSensorChanged(SensorEvent event) {
 				systemNanoTime = System.nanoTime();
 				gyrx = event.values[0];
@@ -116,7 +119,7 @@ public class MainActivity extends Activity {
 				SensorManager.SENSOR_DELAY_NORMAL);
 
 		// Define a listener that responds to accelerometer updates.
-		SensorEventListener accelerometerListener = new SensorEventListener() {
+		accelerometerListener = new SensorEventListener() {
 			public void onSensorChanged(SensorEvent event) {
 				systemNanoTime = System.nanoTime();
 				accx = event.values[0];
@@ -135,6 +138,20 @@ public class MainActivity extends Activity {
 		latestdata = "";
 
 		new NetworkTask().execute("");
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy(); // Always call the superclass method first.
+
+		// Cannot destroy NetworkTask properly, however it should fail
+		// immediately if started twice...
+
+		sensorManager.unregisterListener(accelerometerListener);
+		sensorManager.unregisterListener(gyroscopeListener);
+		sensorManager.unregisterListener(orientationListener);
+		pwl.release();
+		sdwl.release();
 	}
 
 	@Override
@@ -158,7 +175,7 @@ public class MainActivity extends Activity {
 
 		protected Integer doInBackground(String... urls) {
 			timeout = 5;
-			srvport = 4010;					
+			srvport = 4007;					
 			return LaunchSingleCliTCPSrv(srvport, null);
 		}
 
@@ -283,14 +300,11 @@ public class MainActivity extends Activity {
 			switch (iResult)
 			{
 			case EXIT_SUCCESS:
-				if (handlecli(param) != EXIT_SUCCESS)
-				{
-					System.out.println("LaunchSingleCliTCPSrv warning : Error while communicating with the client. ");
+				if (handlecli(param) != EXIT_SUCCESS) {
+					System.out.println("LaunchSingleCliTCPSrv warning : Error while communicating with a client. ");
 				}
-				if (disconnectclifromtcpsrv() != EXIT_SUCCESS)
-				{
-					releasetcpsrv();
-					return EXIT_FAILURE;
+				if (disconnectclifromtcpsrv() != EXIT_SUCCESS) {
+					System.out.println("LaunchSingleCliTCPSrv warning : Error disconnecting a client. ");
 				}
 				break;
 			case EXIT_TIMEOUT:

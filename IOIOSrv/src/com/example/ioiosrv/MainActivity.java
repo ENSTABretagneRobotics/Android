@@ -1,6 +1,9 @@
 package com.example.ioiosrv;
 
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.DigitalInput;
 import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.PulseInput;
 import ioio.lib.api.PwmOutput;
 import ioio.lib.api.exception.ConnectionLostException;
 import ioio.lib.util.BaseIOIOLooper;
@@ -36,9 +39,18 @@ public class MainActivity extends IOIOActivity {
 
 	private ToggleButton button_;
 
-	public int pw1 = 1500;
-	public int pw2 = 1500;
-	public int pw3 = 1500;
+	boolean do1 = false;
+	boolean do2 = false;
+	int pw1 = 1500;
+	int pw2 = 1500;
+	int pw3 = 1500;
+	boolean di1 = false;
+	boolean di2 = false;
+	int pwIn1 = 1500;
+	int pwIn2 = 1500;
+	int pwIn3 = 1500;
+	double voltage1 = 0;
+	double voltage2 = 0;
 
 	//Timer updateTimer;
 
@@ -65,6 +77,19 @@ public class MainActivity extends IOIOActivity {
 	}
 
 	@Override
+	public void onDestroy() {
+		super.onDestroy(); // Always call the superclass method first.
+
+		// Cannot destroy NetworkTask properly, however it should fail
+		// immediately if started twice...
+
+		//updateTimer.cancel();
+		
+		pwl.release();
+		sdwl.release();
+	}
+
+	@Override
 	public boolean onCreateOptionsMenu(Menu menu) {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
@@ -82,11 +107,6 @@ public class MainActivity extends IOIOActivity {
 	}
 
 	public void update() {
-
-		// Set the actuators.
-		//pw1 = 1500;
-		//pw2 = 1500;
-		//pw3 = 1500;
 	}
 
 	/**
@@ -99,9 +119,18 @@ public class MainActivity extends IOIOActivity {
 	class Looper extends BaseIOIOLooper {
 		/** The on-board LED. */
 		private DigitalOutput led_;
+		private DigitalOutput do1_;
+		private DigitalOutput do2_;
 		private PwmOutput pwm1_;
 		private PwmOutput pwm2_;
 		private PwmOutput pwm3_;
+		private DigitalInput di1_;
+		private DigitalInput di2_;
+		private PulseInput pwmIn1_;
+		private PulseInput pwmIn2_;
+		private PulseInput pwmIn3_;
+		private AnalogInput ai1_;
+		private AnalogInput ai2_;
 
 		/**
 		 * Called every time a connection with IOIO has been established.
@@ -115,9 +144,18 @@ public class MainActivity extends IOIOActivity {
 		@Override
 		protected void setup() throws ConnectionLostException {
 			led_ = ioio_.openDigitalOutput(0, true);
+			//do1_ = ioio_.openDigitalOutput(10);
+			//do2_ = ioio_.openDigitalOutput(11);
 			pwm1_ = ioio_.openPwmOutput(12, 50);
 			pwm2_ = ioio_.openPwmOutput(13, 50);
 			pwm3_ = ioio_.openPwmOutput(14, 50);
+			//di1_ = ioio_.openDigitalInput(3);
+			//di2_ = ioio_.openDigitalInput(4);
+			//pwmIn1_ = ioio_.openPulseInput(5, PulseMode.POSITIVE);
+			//pwmIn2_ = ioio_.openPulseInput(6, PulseMode.POSITIVE);
+			//pwmIn3_ = ioio_.openPulseInput(7, PulseMode.POSITIVE);
+			//ai1_ = ioio_.openAnalogInput(41);
+			//ai2_ = ioio_.openAnalogInput(42);
 		}
 
 		/**
@@ -131,11 +169,19 @@ public class MainActivity extends IOIOActivity {
 		@Override
 		public void loop() throws ConnectionLostException {
 			led_.write(!button_.isChecked());
+			//do1_.write(do1);
+			//do2_.write(do2);
 			pwm1_.setPulseWidth(pw1);
 			pwm2_.setPulseWidth(pw2);
 			pwm3_.setPulseWidth(pw3);
-
 			try {
+				//di1 = di1_.read();
+				//di2 = di2_.read();
+				//pwIn1 = (int)(pwmIn1_.getDuration()*1000);
+				//pwIn2 = (int)(pwmIn2_.getDuration()*1000);
+				//pwIn3 = (int)(pwmIn3_.getDuration()*1000);
+				//voltage1 = ai1_.getVoltage();
+				//voltage2 = ai2_.getVoltage();
 				Thread.sleep(50);
 			} catch (InterruptedException e) {
 			}
@@ -304,12 +350,10 @@ public class MainActivity extends IOIOActivity {
 			switch (iResult) {
 			case EXIT_SUCCESS:
 				if (handlecli(param) != EXIT_SUCCESS) {
-					System.out
-							.println("LaunchSingleCliTCPSrv warning : Error while communicating with the client. ");
+					System.out.println("LaunchSingleCliTCPSrv warning : Error while communicating with a client. ");
 				}
 				if (disconnectclifromtcpsrv() != EXIT_SUCCESS) {
-					releasetcpsrv();
-					return EXIT_FAILURE;
+					System.out.println("LaunchSingleCliTCPSrv warning : Error disconnecting a client. ");
 				}
 				break;
 			case EXIT_TIMEOUT:
@@ -360,8 +404,7 @@ public class MainActivity extends IOIOActivity {
 
 					s.setSoTimeout(DEFAULT_SOCK_TIMEOUT);
 
-					int nbBytesRead = s.getInputStream().read(b, offset,
-							256 - offset);
+					int nbBytesRead = s.getInputStream().read(b, offset, 256 - offset);
 
 					if (nbBytesRead <= 0)
 						throw new IOException("read() failed");
@@ -378,6 +421,8 @@ public class MainActivity extends IOIOActivity {
 					String s0 = new String(b, offset - nbBytesRead, nbBytesRead, "UTF-8");
 					//System.err.print(s0);
 
+					// Should make recvuntil()...
+					
 					if (!bFound) {
 						// To improve...
 						if (b[offset - nbBytesRead] != '#') {
@@ -464,9 +509,18 @@ public class MainActivity extends IOIOActivity {
 				} catch (Exception e2) {
 				}
 				// Reset to default values.
+				do1 = false;
+				do2 = false;
 				pw1 = 1500;
 				pw2 = 1500;
 				pw3 = 1500;
+				di1 = false;
+				di2 = false;
+				pwIn1 = 1500;
+				pwIn2 = 1500;
+				pwIn3 = 1500;
+				voltage1 = 0;
+				voltage2 = 0;
 				return EXIT_FAILURE;
 			}
 		}
