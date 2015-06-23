@@ -44,7 +44,11 @@ public class MainActivity extends Activity {
 	int period;
 
 	Timer updateTimer;
-	
+
+	TextView phoneTextView;
+	TextView smsTextView;
+	TextView periodTextView;
+
 	TextView statusTextView;
 
 	TextView latitudeTextView;
@@ -69,8 +73,12 @@ public class MainActivity extends Activity {
 		sdwl.acquire();
 		pwl.acquire();
 
+		phoneTextView = (TextView) findViewById(R.id.phoneTextView);
+		smsTextView = (TextView) findViewById(R.id.smsTextView);
+		periodTextView = (TextView) findViewById(R.id.periodTextView);
+
 		statusTextView = (TextView) findViewById(R.id.statusTextView);
-		
+
 		latitudeTextView = (TextView) findViewById(R.id.latitudeTextView);
 		longitudeTextView = (TextView) findViewById(R.id.longitudeTextView);
 		altitudeTextView = (TextView) findViewById(R.id.altitudeTextView);
@@ -78,7 +86,7 @@ public class MainActivity extends Activity {
 		bearingTextView = (TextView) findViewById(R.id.bearingTextView);
 
 		nmeaTextView = (TextView) findViewById(R.id.nmeaTextView);
-		
+
 		// Get the Location Manager.
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -102,11 +110,11 @@ public class MainActivity extends Activity {
 				altitude = location.getAltitude();
 				speed = location.getSpeed();
 				bearing = location.getBearing();
-				latitudeTextView.setText(String.valueOf(latitude));
-				longitudeTextView.setText(String.valueOf(longitude));
-				altitudeTextView.setText(String.valueOf(altitude));
-				speedTextView.setText(String.valueOf(speed));
-				bearingTextView.setText(String.valueOf(bearing));
+				latitudeTextView.setText("LAT:" + String.valueOf(latitude));
+				longitudeTextView.setText("LON:" + String.valueOf(longitude));
+				altitudeTextView.setText("ALT:" + String.valueOf(altitude));
+				speedTextView.setText("SOG:" + String.valueOf(speed));
+				bearingTextView.setText("COG:" + String.valueOf(bearing));
 			}
 
 			public void onStatusChanged(String provider, int status,
@@ -128,7 +136,7 @@ public class MainActivity extends Activity {
 		phone = null;
 		sms = null;
 		period = 0;
-		
+
 		statusTextView.setText("Status : Waiting for configuration");
 
 		updateTimer = new Timer();
@@ -144,6 +152,9 @@ public class MainActivity extends Activity {
 			sms = smsEditText.getText().toString();
 			period = Integer.parseInt(periodEditText.getText().toString());
 			if ((phone != null) && (phone.compareTo("") != 0) && (period >= 1)) {
+				phoneTextView.setText("Phone number (" + phone + ")");
+				smsTextView.setText("SMS text (" + sms + ")");
+				periodTextView.setText("Period in s (" + String.valueOf(period) + ")");
 				updateTimer.cancel();
 				updateTimer.purge();
 				updateTimer = new Timer();
@@ -165,8 +176,9 @@ public class MainActivity extends Activity {
 	public void update() {
 		statusTextView.setText("Status : Sending");
 		try {
-			String text = sms + "\n" + latitude + "\n" + longitude + "\n"
-					+ altitude + "\n" + speed + "\n" + bearing;
+			String text = sms + "\nLAT:" + latitude + "\nLON:" + longitude
+					+ "\nALT:" + altitude + "\nSOG:" + speed + "\nCOG:"
+					+ bearing;
 			SmsManager.getDefault().sendTextMessage(phone, null, text, null,
 					null);
 			statusTextView.setText("Status : Sent on "
