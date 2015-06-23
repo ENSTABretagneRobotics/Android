@@ -9,10 +9,12 @@ import java.util.TimerTask;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.location.GpsStatus;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.os.BatteryManager;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.PowerManager;
@@ -178,7 +180,7 @@ public class MainActivity extends Activity {
 		try {
 			String text = sms + "\nLAT:" + latitude + "\nLON:" + longitude
 					+ "\nALT:" + altitude + "\nSOG:" + speed + "\nCOG:"
-					+ bearing;
+					+ bearing + "\nBAT:" + getBatteryLevel() + "%";
 			SmsManager.getDefault().sendTextMessage(phone, null, text, null,
 					null);
 			statusTextView.setText("Status : Sent on "
@@ -255,5 +257,16 @@ public class MainActivity extends Activity {
 		Intent settingsIntent = new Intent(
 				Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 		startActivity(settingsIntent);
+	}
+
+	public int getBatteryLevel() {
+		Intent batteryIntent = registerReceiver(null, new IntentFilter(
+				Intent.ACTION_BATTERY_CHANGED));
+		int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+		int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+		if ((level == -1) || (scale == -1)) {
+			return -1;
+		}
+		return (int) (level * 100.0 / (double) scale);
 	}
 }

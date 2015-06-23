@@ -12,5 +12,6 @@ _ CamSrv : Enable to use a smartphone as an IP camera. Transfer smartphone camer
 _ GPSSrv : Enable to use a smartphone as an IP GPS on TCP port 4001. Use e.g. telnet to display raw data.
 _ AHRSSrv : Enable to use a smartphone as an IP Razor AHRS on TCP port 4007. Use e.g. telnet to display raw data.
 _ IOIOSrv : Enable to use a smartphone with a IOIO board as an IP SSC-32 on TCP port 4004. Use e.g. telnet to send SSC-32 commands (e.g. #0P1500).
+_ GPSSMS : Send repeatedly SMS with GPS info.
 
 Copy the projects in your Eclipse workspace and in Eclipse choose Import Existing projects into workspace.
