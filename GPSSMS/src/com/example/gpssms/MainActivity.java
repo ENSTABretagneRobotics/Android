@@ -1,5 +1,8 @@
 package com.example.gpssms;
 
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -75,7 +78,7 @@ public class MainActivity extends Activity {
 		bearingTextView = (TextView) findViewById(R.id.bearingTextView);
 
 		nmeaTextView = (TextView) findViewById(R.id.nmeaTextView);
-
+		
 		// Get the Location Manager.
 		locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
 
@@ -140,26 +143,22 @@ public class MainActivity extends Activity {
 			phone = phoneEditText.getText().toString();
 			sms = smsEditText.getText().toString();
 			period = Integer.parseInt(periodEditText.getText().toString());
+			if ((phone != null) && (phone.compareTo("") != 0) && (period >= 1)) {
+				updateTimer.cancel();
+				updateTimer.purge();
+				updateTimer = new Timer();
+				updateTimer.schedule(new updateTask(new Handler(), this), 0,
+						period * 1000);
+				statusTextView.setText("Status : Configured");
+			} else {
+				statusTextView.setText("Status : Bad configuration");
+				updateTimer.cancel();
+				updateTimer.purge();
+			}
 		} catch (Exception e) {
 			statusTextView.setText("Status : Bad configuration");
-		}
-		if ((phone != null) && (period >= 1)) {
-
-			// Reset GPS update period.
-
-//			locationManager.removeUpdates(locationListener);
-//
-//			// Register the listener with the Location Manager to receive
-//			// location updates from GPS.
-//			locationManager.requestLocationUpdates(
-//					LocationManager.GPS_PROVIDER, period * 1000 / 10, 0,
-//					locationListener);
-
-			updateTimer.schedule(new updateTask(new Handler(), this), 0,
-					period * 1000);
-		}
-		else {
-			statusTextView.setText("Status : Bad configuration");
+			updateTimer.cancel();
+			updateTimer.purge();
 		}
 	}
 
@@ -170,9 +169,11 @@ public class MainActivity extends Activity {
 					+ altitude + "\n" + speed + "\n" + bearing;
 			SmsManager.getDefault().sendTextMessage(phone, null, text, null,
 					null);
-			statusTextView.setText("Status : Configured");
+			statusTextView.setText("Status : Sent on "
+					+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+							.format(Calendar.getInstance().getTime()));
 		} catch (Exception e) {
-			statusTextView.setText("Status : Bad configuration");
+			statusTextView.setText("Status : Error");
 		}
 	}
 
@@ -181,6 +182,7 @@ public class MainActivity extends Activity {
 		super.onDestroy(); // Always call the superclass method first.
 
 		updateTimer.cancel();
+		updateTimer.purge();
 
 		locationManager.removeUpdates(locationListener);
 		locationManager.removeNmeaListener(nmeaListener);
