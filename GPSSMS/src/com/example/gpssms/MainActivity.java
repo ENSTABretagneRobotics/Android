@@ -180,12 +180,11 @@ public class MainActivity extends Activity {
 		try {
 			String text = sms + "\nLAT:" + latitude + "\nLON:" + longitude
 					+ "\nALT:" + altitude + "\nSOG:" + speed + "\nCOG:"
-					+ bearing + "\nBAT:" + getBatteryLevel() + "%";
+					+ bearing + "\nDATE:" + getDate() + "\nBAT:"
+					+ getBatteryLevel() + "%";
 			SmsManager.getDefault().sendTextMessage(phone, null, text, null,
 					null);
-			statusTextView.setText("Status : Sent on "
-					+ new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-							.format(Calendar.getInstance().getTime()));
+			statusTextView.setText("Status : Sent on " + getDate());
 		} catch (Exception e) {
 			statusTextView.setText("Status : Error");
 		}
@@ -257,6 +256,11 @@ public class MainActivity extends Activity {
 		Intent settingsIntent = new Intent(
 				Settings.ACTION_LOCATION_SOURCE_SETTINGS);
 		startActivity(settingsIntent);
+	}
+
+	public String getDate() {
+		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+				.format(Calendar.getInstance().getTime());
 	}
 
 	public int getBatteryLevel() {
