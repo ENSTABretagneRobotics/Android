@@ -8,6 +8,8 @@ _ AHRSSrv : Enable to use a smartphone as an IP Razor AHRS on TCP port 4007. Use
 _ IOIOSrv : Enable to use a smartphone with a IOIO board as an IP SSC-32 on TCP port 4004. Use e.g. telnet to send SSC-32 commands (e.g. #0P1500).
 _ GPSSMS : Send repeatedly SMS with GPS info. Using SMS Backup & Restore (see http://android.riteshsahu.com/) to export the SMS in sms.xml and GPSSMS2KML (see File_conversions), you can export the trajectory to a KML file to display it in Google Earth.
 
+Some similar applications are also partially available for the HTC HD2 (Windows Mobile 6.5), see http://www.ensta-bretagne.fr/lebars/WindowsMobile65.zip .
+
 Installation :
 _ From the smartphone, go to this webpage and launch the .apk file (in the bin folder of each project of this webpage). 
 _ If you do not have Internet on the smartphone, connect it on a USB port of your computer, copy the .apk downloaded from your computer on the smartphone (e.g. in the Downloads folder of your smartphone), and from the smartphone launch the .apk file.
