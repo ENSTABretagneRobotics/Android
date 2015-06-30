@@ -1,10 +1,10 @@
 dans pochette étanche, mettre des choses pour assurer que les côtés touchent pas les boutons, et aussi le bouton home
 
-tester régulation en cap et suivi de gps avec les Srv
-reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
-il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
 ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?
 la recherche du # et \r marche peut-être pas à tous les coups et serait à améliorer pour gérer d'autres commandes...
+il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
+tester régulation en cap et suivi de gps avec les Srv
+reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
 
 renommer test en autre chose (test airspeed and airpressure, altimeter...)
 
@@ -19,7 +19,7 @@ C peut être compilé avec Code Sourcery arm-none-linux-gnueabi, compiler en stati
 
 regarder threads ou autre de thibault, timer dans dossier android/smarttracker
 timer ou Runnable and h2 Handler?
-BroadcastReceiver, ResulReceiver au lieu de AsyncTask?
+BroadcastReceiver, ResultReceiver au lieu de AsyncTask?
 executeOnExecutor
 
 peut-être pas utiliser le LocationManager.NETWORK_PROVIDER quand on sait qu'on a le GPS au cas où il enverrait de temps en temps des positions imprécises
