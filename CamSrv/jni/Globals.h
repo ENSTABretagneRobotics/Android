@@ -29,6 +29,7 @@ EXTERN_C CHRONO chrono;
 EXTERN_C CvFont font;
 EXTERN_C CRITICAL_SECTION imageCS;
 EXTERN_C IplImage* frame;
+EXTERN_C IplImage* resizedframe;
 EXTERN_C IplImage* image;
 EXTERN_C IplImage* previmage;
 EXTERN_C IplImage* detectimage;
@@ -40,14 +41,17 @@ EXTERN_C CRITICAL_SECTION sharedbufCS;
 EXTERN_C int encodeparams[2];
 EXTERN_C BOOL bStop;
 
-EXTERN_C int camid;
-EXTERN_C char srvport[MAX_BUF_LEN];
+// Parameters.
+EXTERN_C char szDevPath[256];
+EXTERN_C char srvport[256];
 EXTERN_C int videoimgwidth; 
 EXTERN_C int videoimgheight; 
 EXTERN_C int captureperiod;
 EXTERN_C int timeout;
+EXTERN_C BOOL bForceSoftwareResize;
+EXTERN_C double hscale;
+EXTERN_C double vscale;
 EXTERN_C double angle;
-EXTERN_C double scale;
 EXTERN_C int bFlip;
 EXTERN_C BOOL bUDP;
 EXTERN_C int pixcolorchgthreshold; 

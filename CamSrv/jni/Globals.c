@@ -18,6 +18,7 @@ CHRONO chrono;
 CvFont font;
 CRITICAL_SECTION imageCS;
 IplImage* frame = NULL;
+IplImage* resizedframe = NULL;
 IplImage* image = NULL;
 IplImage* previmage = NULL;
 IplImage* detectimage = NULL;
@@ -29,14 +30,17 @@ CRITICAL_SECTION sharedbufCS;
 int encodeparams[2];
 BOOL bStop = FALSE;
 
-int camid = 0;
-char srvport[MAX_BUF_LEN];
+// Parameters.
+char szDevPath[256];
+char srvport[256];
 int videoimgwidth = 0; 
 int videoimgheight = 0; 
 int captureperiod = 0;
 int timeout = 0;
+BOOL bForceSoftwareResize = FALSE;
+double hscale = 1;
+double vscale = 1;
 double angle = 0;
-double scale = 1;
 int bFlip = FALSE;
 BOOL bUDP = FALSE;
 int pixcolorchgthreshold = 0; 

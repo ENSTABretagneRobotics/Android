@@ -56,7 +56,7 @@ Version status : Not finished
 #endif // __GNUC__
 
 // OpenCV headers.
-#if defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249)
+#if defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV248) || defined(OPENCV249) || defined(OPENCV2411)
 //#include "opencv/cv.h" // Sometimes cause strange errors in debug and C++ mode due to the redefinition of free()...
 #include "opencv/cvwimage.h"
 #include "opencv/cxcore.h"
