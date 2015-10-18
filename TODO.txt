@@ -1,6 +1,8 @@
+AS2SMS and add also in additional variables other positions estimations (coarse...)
+ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?->IOIOSvcSrv
+
 dans pochette étanche, mettre des choses pour assurer que les côtés touchent pas les boutons, et aussi le bouton home
 
-ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?
 la recherche du # et \r marche peut-être pas à tous les coups et serait à améliorer pour gérer d'autres commandes...
 il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
 tester régulation en cap et suivi de gps avec les Srv
