@@ -1,17 +1,18 @@
 AS2SMS and add also in additional variables other positions estimations (coarse...)
-ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?->IOIOSvcSrv
 
 dans pochette étanche, mettre des choses pour assurer que les côtés touchent pas les boutons, et aussi le bouton home
 
+ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?->IOIOSvcSrv
 la recherche du # et \r marche peut-être pas à tous les coups et serait à améliorer pour gérer d'autres commandes...
 il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
 tester régulation en cap et suivi de gps avec les Srv
 reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
+ioio avec android > 4.1.2?->besoin du mode OpenAccessory, App-IOIO0504 et dernière version d'android-sdk, ADT, eclipse...
 
 renommer test en autre chose (test airspeed and airpressure, altimeter...)
 
 SSH, RDP/VNC server
-proxy android? ioio avec android > 4.1.2? problème GPS (faut aller dehors?) et caméra htc (VGA non supporté?), restaurer? galaxy s brické?
+proxy android?  problème GPS (faut aller dehors?) et caméra htc (VGA non supporté?), restaurer? galaxy s brické?
 
 ASLogger
 difficile d'être sûr que les nombres seront bien dans le format 111111111.111 à cause des locales (séparateur décimal, séparateur milliers...)
