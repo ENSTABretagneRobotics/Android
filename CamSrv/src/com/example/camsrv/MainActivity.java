@@ -68,8 +68,7 @@ public class MainActivity extends Activity {
 		startService(i);
 		infoTextView.setText("STARTED");
 
-		// AppNativeQuit() does not seem to be able to stop the native
-		// code...
+		// AppNativeQuit() does not seem to be always able to stop the native code...
 	}
 
 	@Override

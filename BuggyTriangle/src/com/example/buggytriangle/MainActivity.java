@@ -258,6 +258,7 @@ public class MainActivity extends IOIOActivity {
 		super.onDestroy(); // Always call the superclass method first.
 
 		updateTimer.cancel();
+		updateTimer.purge();
 
 		sensorManager.unregisterListener(orientationListener);
 		locationManager.removeUpdates(locationListener);

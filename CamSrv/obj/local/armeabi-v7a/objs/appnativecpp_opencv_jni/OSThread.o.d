@@ -49,6 +49,8 @@ obj/local/armeabi-v7a/objs/appnativecpp_opencv_jni/OSThread.o: \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm/signal.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm-generic/signal.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm/sigcontext.h \
+ C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/ucontext.h \
+ C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/user.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/fcntl.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/linux/fcntl.h \
  C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm/fcntl.h \
@@ -164,6 +166,10 @@ C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm/signal.h:
 C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm-generic/signal.h:
 
 C:/android-ndk/platforms/android-8/arch-arm/usr/include/asm/sigcontext.h:
+
+C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/ucontext.h:
+
+C:/android-ndk/platforms/android-8/arch-arm/usr/include/sys/user.h:
 
 C:/android-ndk/platforms/android-8/arch-arm/usr/include/fcntl.h:
 

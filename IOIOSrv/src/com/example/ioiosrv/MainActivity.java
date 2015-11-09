@@ -84,6 +84,7 @@ public class MainActivity extends IOIOActivity {
 		// immediately if started twice...
 
 		//updateTimer.cancel();
+		//updateTimer.purge();
 		
 		pwl.release();
 		sdwl.release();

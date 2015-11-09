@@ -10,24 +10,24 @@ int LoadConfig()
 	memset(szDevPath, 0, sizeof(szDevPath));
 	sprintf(szDevPath, "0");
 	memset(srvport, 0, sizeof(srvport));
-	sprintf(srvport, "27254");
+	sprintf(srvport, "4014");
 	videoimgwidth = 640; 
 	videoimgheight = 480; 
-	captureperiod = 100;
-	timeout = 0;
+	captureperiod = 40;
+	timeout = 5;
 	bForceSoftwareResize = 1;
 	hscale = 1;
 	vscale = 1;
 	angle = 0*M_PI/180.0;
 	bFlip = 0;
 	bUDP = 0;
-	pixcolorchgthreshold = 3; 
-	timecompressiondividerthreshold = 4;
+	pixcolorchgthreshold = 12;
+	timecompressiondividerthreshold = 50;
 	fullimgperiod = 1000; 
-	encodequality = 95;
+	encodequality = 50;
 	memset(encodetype, 0, sizeof(encodetype));
 	sprintf(encodetype, ".JPEG");
-	method = 0;
+	method = 3;
 	bDisableVideoRecording = 0;
 
 #ifdef __ANDROID__
@@ -96,7 +96,7 @@ int LoadConfig()
 	if (captureperiod < 0)
 	{
 		printf("Invalid parameter : captureperiod.\n");
-		captureperiod = 100;
+		captureperiod = 40;
 	}
 	if (hscale == 0)
 	{
@@ -111,7 +111,7 @@ int LoadConfig()
 	if (timecompressiondividerthreshold < 1)
 	{
 		printf("Invalid parameter : timecompressiondividerthreshold.\n");
-		timecompressiondividerthreshold = 4;
+		timecompressiondividerthreshold = 50;
 	}
 
 	return EXIT_SUCCESS;

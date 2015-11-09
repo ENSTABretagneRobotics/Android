@@ -68,6 +68,11 @@ Version status : Not finished
 #include "opencv/cxmisc.h"
 #include "opencv/ml.h"
 #endif // __cplusplus
+#ifdef __cplusplus
+#include "opencv2/core/core.hpp"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/contrib/contrib.hpp"
+#endif // __cplusplus
 // min and max may be undefined by OpenCV 2.X.X so we need to redefine them here.
 #if !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
 #ifndef max

@@ -1,18 +1,21 @@
+faire aussi ahrssvcsrv et gpssvcsrv avec notification pour voir si ça empêche plus android de détruire les activity et connections réseaux dedans...
+camsrv : rajouter des codes de retour d'erreur plus détaillés et essayer de les afficher (en notification?)
+check if intent, action is null in ioiosvcsrv and camsrv like in helloioioservice
+prevent android from killing activity : service avec notification, startForeground()
+problème IOIOService dans App-IOIO0500-504, semble OK dans 505 mais il faut AndroidStudio...
+IOIOSrv/IOIOSvcSrv : com pas fiable, faut relancer les apps...
+la recherche du # et \r marche peut-être pas à tous les coups et serait à améliorer pour gérer d'autres commandes...
+il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
+reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
+mettre à jour sensor type_orientation
+
 AS2SMS and add also in additional variables other positions estimations (coarse...)
+recevoir et interpréter SMS? sms backup restore qui enregistre périodiquement...?
 
 dans pochette étanche, mettre des choses pour assurer que les côtés touchent pas les boutons, et aussi le bouton home
 
-ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?->IOIOSvcSrv
-la recherche du # et \r marche peut-être pas à tous les coups et serait à améliorer pour gérer d'autres commandes...
-il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
-tester régulation en cap et suivi de gps avec les Srv
-reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
-ioio avec android > 4.1.2?->besoin du mode OpenAccessory, App-IOIO0504 et dernière version d'android-sdk, ADT, eclipse...
-
-renommer test en autre chose (test airspeed and airpressure, altimeter...)
-
 SSH, RDP/VNC server
-proxy android?  problème GPS (faut aller dehors?) et caméra htc (VGA non supporté?), restaurer? galaxy s brické?
+proxy android? problème GPS (faut aller dehors?) et caméra htc (VGA non supporté?), restaurer? galaxy s brické?
 
 ASLogger
 difficile d'être sûr que les nombres seront bien dans le format 111111111.111 à cause des locales (séparateur décimal, séparateur milliers...)
@@ -32,6 +35,16 @@ pourquoi dans buggy le fait de déplacer le nmeatextview en bas fait tout planter
 
 
 OLD
+
+ioio avec android > 4.1.2?->besoin du mode OpenAccessory (install Google APIs)->IOIOSvcSrv OK avec App-IOIO0400, android-sdk 24.4.1, ADT 23.0.7, eclipse Mars.1 sur Nexus 7 Android 5.1.1 et S3 Mini Android 4.1.2 avec IOIO V1 et IOIO OTG
+problème IOIO avec Android 4.3 (led jaune s'allume dès que la IOIO est branchée au smartphone), OK 4.1.2, mettre à jour firmware IOIO?
+
+impossible de refaire marcher la version de CamSrv qui marchait à euRathlon sur mon S3->marche que sur caméra frontale?->il faut lancer, killler 2-3 fois avant que ça marche...
+rajouter notification dans CamSrv pour pouvoir arreter facilement le service->on n'arrive pas à l'arreter (que quand la caméra n'a pas pu être ouverte)...
+
+ioiosrv a besoin du focus pour la com ioio, utiliser ioioservice?->IOIOSvcSrv
+
+renommer test en autre chose (test airspeed and airpressure, altimeter...)->TestI2C
 
 ASLogger
 les données ne sont pas toujours rangées dans l'ordre du temps UTC? appli lancée à moitié plusieurs fois?

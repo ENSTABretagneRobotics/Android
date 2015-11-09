@@ -31,6 +31,7 @@ S4 a peut-être un GPS légèrement mieux que S3 mais les 2 sont bons, on dirait qu
 Sony : mauvaises boussoles?
 Galaxy S3 (Android 4.1.1) : ADB TCP OK, problème IOIO? (oublié de réactiver débuggage USB et désactiver ADB TCP?)
 Samsung Galaxy S Advance GT-I9070 : ADB TCP OK (avec Android 4.4 Cyanogenmod?)
+Nexus 7 (Android 5.1.1) : juste caméra frontale, IOIO OK si mode accessory dans l'app
 
 
 ADB
@@ -53,8 +54,7 @@ ADB over TCP OK avec Galaxy S3 (et même détecté dans Eclipse sur les PC de l'éco
 
 IOIO V1
 
-changer version d'Android/éditer project.properties du projet et penser à rajouter res/xml/accessory_filter.xml
-activer débuggage USB et désactiver ADB TCP
-problème IOIO avec Android 4.3 (led jaune s'allume dès que la IOIO est branchée au smartphone), OK 4.1.2, mettre à jour firmware IOIO?
+changer version d'Android/éditer project.properties du projet et penser à rajouter res/xml/accessory_filter.xml si nécessaire
+activer USB debugging et désactiver ADB TCP (pas pour Android>4.1.2...)
 Attention : ne pas confondre les software (e.g. App-IOIO0400.zip : sources Java en .zip), firmware (App-IOIO0400.ioioapp : .zip regroupant des .ioio) et bootloader (Boot-IOIO0311-App-IOIO0400.ioioimg : .zip regroupant des .ioio qui contiennent firmware+bootloader) qui ont parfois les mêmes noms... (les liens sont parfois pas bons, mais les QR codes ont l'air bons...)
 Il faut aussi redémarrer la IOIO pour qu'elle mette à jour son firmware avec IOIOManager (les versions matérielles qu'on a sont MINT0010 a priori). Il faut aussi recompiler nos programmes avec la nouvelle version.
