@@ -1,42 +1,39 @@
 package com.example.ioiosvcsrv;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.PowerManager;
+import android.util.Log;
 import android.view.Menu;
+import android.widget.SeekBar;
 
 public class MainActivity extends Activity {
 
-	private PowerManager powerManager;
-	private PowerManager.WakeLock sdwl;
-	private PowerManager.WakeLock pwl;
+	private final static String TAG = "IOIOSvcSrv MainActivity";
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 
-		// Dim screen and prevent CPU sleep...
-		powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
-		sdwl = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, this
-				.getApplication().toString());
-		pwl = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, this
-				.getApplication().toString());
-		sdwl.acquire();
-		pwl.acquire();
-	
-		startService(new Intent(this, IOIOSvcSrv.class));
-		//finish();	
+		Log.d(TAG, "onCreate()");
+
+		Intent i = new Intent(MainActivity.this, IOIOSvcSrv.class);
+		i.setAction("START");
+		startService(i);
+
+		SeekBar seekBar1 = (SeekBar) findViewById(R.id.seekBar1);
+		seekBar1.setProgress(50);
+		seekBar1.setOnSeekBarChangeListener(new SlideToStartStop(this));
+
+		//finish();
 	}
 
 	@Override
 	public void onDestroy() {
 		super.onDestroy(); // Always call the superclass method first.
-		
-		pwl.release();
-		sdwl.release();
+
+		Log.d(TAG, "onDestroy()");
 	}
 
 	@Override
@@ -44,5 +41,44 @@ public class MainActivity extends Activity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.activity_main, menu);
 		return true;
+	}
+
+	public class SlideToStartStop implements SeekBar.OnSeekBarChangeListener {
+
+		int curProgress = 50;
+		Activity mActivity;
+
+		public SlideToStartStop(Activity activity) {
+			mActivity = activity;			
+		}
+
+		@Override
+		public void onStopTrackingTouch(SeekBar seekBar) {
+			if (seekBar.getProgress() < 5) {
+				Intent i = new Intent(MainActivity.this, IOIOSvcSrv.class);
+				i.setAction("STOP");
+				startService(i);
+			} else if (seekBar.getProgress() > 95) {
+				Intent i = new Intent(MainActivity.this, IOIOSvcSrv.class);
+				i.setAction("START");
+				startService(i);
+			} 
+			curProgress = 50;
+			seekBar.setProgress(curProgress);			
+		}
+
+		@Override
+		public void onStartTrackingTouch(SeekBar seekBar) {
+
+		}
+
+		@Override
+		public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
+			if (Math.abs(curProgress - progress) > 25) {
+				seekBar.setProgress(curProgress);
+			} else {
+				curProgress = seekBar.getProgress();
+			}
+		}
 	}
 }

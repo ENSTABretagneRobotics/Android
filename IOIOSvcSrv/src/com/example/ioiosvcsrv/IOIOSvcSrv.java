@@ -1,16 +1,5 @@
 package com.example.ioiosvcsrv;
 
-import ioio.lib.api.AnalogInput;
-import ioio.lib.api.DigitalInput;
-import ioio.lib.api.DigitalOutput;
-import ioio.lib.api.IOIO;
-import ioio.lib.api.PulseInput;
-import ioio.lib.api.PwmOutput;
-import ioio.lib.api.exception.ConnectionLostException;
-import ioio.lib.util.BaseIOIOLooper;
-import ioio.lib.util.IOIOLooper;
-import ioio.lib.util.android.IOIOService;
-
 import java.io.IOException;
 import java.net.InetSocketAddress;
 import java.net.ServerSocket;
@@ -26,16 +15,34 @@ import java.util.regex.Pattern;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.IBinder;
+import android.os.PowerManager;
+import android.util.Log;
+import ioio.lib.api.AnalogInput;
+import ioio.lib.api.DigitalInput;
+import ioio.lib.api.DigitalOutput;
+import ioio.lib.api.IOIO;
+import ioio.lib.api.PulseInput;
+import ioio.lib.api.PwmOutput;
+import ioio.lib.api.exception.ConnectionLostException;
+import ioio.lib.util.BaseIOIOLooper;
+import ioio.lib.util.IOIOLooper;
+import ioio.lib.util.android.IOIOService;
 
-/**
- * An example IOIO service. While this service is alive, it will attempt to
- * connect to a IOIO and blink the LED. A notification will appear on the
- * notification bar, enabling the user to stop the service.
- */
 public class IOIOSvcSrv extends IOIOService {
+	private final static String TAG = "IOIOSvcSrv";
+	
+	protected boolean bStop = true;
+	protected boolean bNetworkTaskRunning = false;
+
+	private NotificationManager nm;
+
+	private PowerManager powerManager;
+	private PowerManager.WakeLock sdwl;
+	private PowerManager.WakeLock pwl;
 
 	boolean do1 = false;
 	boolean do2 = false;
@@ -114,31 +121,72 @@ public class IOIOSvcSrv extends IOIOService {
 	}
 
 	@Override
+	public void onCreate() {
+		super.onCreate();
+		
+		Log.d(TAG, "onCreate()");		
+	}
+
+	@Override
+	public void onDestroy() {
+		super.onDestroy();
+		
+		Log.d(TAG, "onDestroy()");
+	}
+
+	@Override
 	public void onStart(Intent intent, int startId) {
 		super.onStart(intent, startId);
-		NotificationManager nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		if (intent != null && intent.getAction() != null
-				&& intent.getAction().equals("stop")) {
-			// User clicked the notification. Need to stop the service.
-			nm.cancel(0);
-			stopSelf();
-
-			// Cannot destroy NetworkTask properly, however it should fail
-			// immediately if started twice...
-			
-		} else {
-			// Service starting. Create a notification.
-			Notification notification = new Notification(
-					R.drawable.ic_launcher, "IOIOSvcSrv service running",
+		nm = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
+		if (intent == null) return;
+		String action = intent.getAction();
+		if (action == null) return;
+		Log.d(TAG, action);
+		if ((bStop)&&(action.equals("START"))) {
+			Log.d(TAG, "Starting IOIOSvcSrv service");			
+			Notification notification = new Notification(R.drawable.ic_launcher, "IOIOSvcSrv service running",
 					System.currentTimeMillis());
-			notification
-					.setLatestEventInfo(this, "IOIOSvcSrv Service", "Click to stop",
-							PendingIntent.getService(this, 0, new Intent(
-									"stop", null, this, this.getClass()), 0));
+			notification.setLatestEventInfo(this, "IOIOSvcSrv Service", "Click to stop",
+					PendingIntent.getService(this, 0, new Intent("STOP", null, this, this.getClass()), 0));
 			notification.flags |= Notification.FLAG_ONGOING_EVENT;
-			nm.notify(0, notification);
+			nm.notify(1, notification);	
+			startForeground(1, notification);
+
+			// Dim screen and prevent CPU sleep...
+			powerManager = (PowerManager) getSystemService(Context.POWER_SERVICE);
+			sdwl = powerManager.newWakeLock(PowerManager.SCREEN_DIM_WAKE_LOCK, this
+					.getApplication().toString());
+			pwl = powerManager.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK, this
+					.getApplication().toString());
+			sdwl.acquire();
+			pwl.acquire();
+
+			bStop = false;
 			
 			new NetworkTask().execute("");
+			
+			Log.d(TAG, "IOIOSvcSrv service started");
+		} else if ((!bStop)&&(action.equals("STOP"))) {
+			// User clicked the notification. Need to stop the service.
+			Log.d(TAG, "Stopping IOIOSvcSrv service");
+
+			// Should stop the NetworkTask.
+			bStop = true;
+			while (bNetworkTaskRunning)	{
+				try {
+					Thread.sleep(50);
+				} catch (InterruptedException e) {
+				}		
+			}
+			
+			pwl.release();
+			sdwl.release();
+			
+			nm.cancel(1);
+			stopForeground(true);
+
+			Log.d(TAG, "IOIOSvcSrv service stopped");
+			stopSelf();
 		}
 	}
 
@@ -149,15 +197,18 @@ public class IOIOSvcSrv extends IOIOService {
 
 	class NetworkTask extends AsyncTask<String, Void, Integer> {
 
+		protected void onPreExecute(Integer param) {
+			bNetworkTaskRunning = true;
+		}
+
 		protected Integer doInBackground(String... urls) {
 			timeout = 5;
 			srvport = 4004;
 			return LaunchSingleCliTCPSrv(srvport, null);
 		}
 
-		protected void onPostExecute(Integer param) {
-			// TODO: check this.exception
-			// TODO: do something with the feed
+		protected void onPostExecute(Integer param) {	
+			bNetworkTaskRunning = false;
 		}
 	}
 
@@ -273,7 +324,7 @@ public class IOIOSvcSrv extends IOIOService {
 			return EXIT_FAILURE;
 		}
 
-		for (;;) {
+		while (!bStop) {
 			iResult = waitforclifortcpsrv(DEFAULT_SOCK_TIMEOUT);
 			switch (iResult) {
 			case EXIT_SUCCESS:
@@ -292,13 +343,12 @@ public class IOIOSvcSrv extends IOIOService {
 			}
 		}
 
-		// Unreachable code.
-		// if (releasetcpsrv() != EXIT_SUCCESS)
-		// {
-		// return EXIT_FAILURE;
-		// }
+		if (releasetcpsrv() != EXIT_SUCCESS)
+		{
+			return EXIT_FAILURE;
+		}
 
-		// return EXIT_SUCCESS;
+		return EXIT_SUCCESS;
 	}
 
 	public int handlecli(Object param) {
@@ -312,7 +362,7 @@ public class IOIOSvcSrv extends IOIOService {
 
 		Arrays.fill(b, (byte) 0);
 
-		for (;;) {
+		while (!bStop) {
 			try {
 				selector = Selector.open();
 
@@ -432,10 +482,7 @@ public class IOIOSvcSrv extends IOIOService {
 				}
 			} catch (Exception e) {
 				System.out.println("handlecli error : " + e + ". ");
-				try {
-					selector.close();
-				} catch (Exception e2) {
-				}
+				try { selector.close(); } catch (Exception e2) { }
 				// Reset to default values.
 				do1 = false;
 				do2 = false;
@@ -453,7 +500,20 @@ public class IOIOSvcSrv extends IOIOService {
 			}
 		}
 
-		// Unreachable code.
-		// return EXIT_SUCCESS;
+		try { selector.close(); } catch (Exception e2) { }
+		// Reset to default values.
+		do1 = false;
+		do2 = false;
+		pw1 = 1500;
+		pw2 = 1500;
+		pw3 = 1500;
+		di1 = false;
+		di2 = false;
+		pwIn1 = 1500;
+		pwIn2 = 1500;
+		pwIn3 = 1500;
+		voltage1 = 0;
+		voltage2 = 0;
+		return EXIT_SUCCESS;
 	}
 }

@@ -1,16 +1,17 @@
-faire aussi ahrssvcsrv et gpssvcsrv avec notification pour voir si ça empêche plus android de détruire les activity et connections réseaux dedans...
-camsrv : rajouter des codes de retour d'erreur plus détaillés et essayer de les afficher (en notification?)
-check if intent, action is null in ioiosvcsrv and camsrv like in helloioioservice
-prevent android from killing activity : service avec notification, startForeground()
-problème IOIOService dans App-IOIO0500-504, semble OK dans 505 mais il faut AndroidStudio...
+incompatibilité entre nouveaux projets hello world d'eclipse et notification, partir de projets existants...
+
+UART IOIO...
+
+camsvcsrv : crash quand on stoppe (bug dans code C?), mais ce n'est pas vraiment un problème... utiliser thread dans native code ou AsyncTask ou un peu des 2?
+camsrv/camsvcsrv : rajouter des codes de retour d'erreur plus détaillés et essayer de les afficher (en notification?)
 IOIOSrv/IOIOSvcSrv : com pas fiable, faut relancer les apps...
 la recherche du # et \r marche peut-être pas à tous les coups et serait à améliorer pour gérer d'autres commandes...
 il faut lancer d'abord CamSrv, puis AHRSSrv, puis IOIOSrv pour qu'il ait le focus (bien s'assurer qu'ils ne s'exécutent pas déjà avec Force stop dans Task manager)...
-reconnection camsrv, tester sur pc pour voir si c'est au niveau du C que c'est pas bon (serveur sur eeepc+rdp vers w700 qui a le client)...
+problème IOIOService dans App-IOIO0500-504, semble OK dans 505 mais il faut AndroidStudio...
 mettre à jour sensor type_orientation
 
-AS2SMS and add also in additional variables other positions estimations (coarse...)
 recevoir et interpréter SMS? sms backup restore qui enregistre périodiquement...?
+AS2SMS and add also in additional variables other positions estimations (coarse...)
 
 dans pochette étanche, mettre des choses pour assurer que les côtés touchent pas les boutons, et aussi le bouton home
 
@@ -35,6 +36,15 @@ pourquoi dans buggy le fait de déplacer le nmeatextview en bas fait tout planter
 
 
 OLD
+
+améliorer UI avec swipe pour start/stop service...
+
+faire aussi ahrssvcsrv et gpssvcsrv avec notification pour voir si ça empêche plus android de détruire les activity et connections réseaux dedans...
+dans Service, actuellement la AsyncTask reste même après stopself()...->lié au fait que c'est SingleCli...?->rajouté bStop...
+prevent android from killing activity : service avec notification, startForeground()
+mettre les wake lock dans les services car les activity peuvent toujours être détruites?
+
+Service vs IntentService : IntentService est détruit dès qu'il n'a plus d'intent à gérer?
 
 ioio avec android > 4.1.2?->besoin du mode OpenAccessory (install Google APIs)->IOIOSvcSrv OK avec App-IOIO0400, android-sdk 24.4.1, ADT 23.0.7, eclipse Mars.1 sur Nexus 7 Android 5.1.1 et S3 Mini Android 4.1.2 avec IOIO V1 et IOIO OTG
 problème IOIO avec Android 4.3 (led jaune s'allume dès que la IOIO est branchée au smartphone), OK 4.1.2, mettre à jour firmware IOIO?

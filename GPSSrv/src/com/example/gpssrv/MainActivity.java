@@ -138,6 +138,12 @@ public class MainActivity extends Activity {
 		super.onStop();  // Always call the superclass method first.
 	}	
 
+	private void enableLocationSettings() {
+		Intent settingsIntent = new Intent(
+				Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+		startActivity(settingsIntent);
+	}
+
 	class NetworkTask extends AsyncTask<String, Void, Integer> {
 
 		protected Integer doInBackground(String... urls) {
@@ -150,16 +156,6 @@ public class MainActivity extends Activity {
 			// TODO: check this.exception 
 			// TODO: do something with the feed
 		}
-	}
-
-	private void enableLocationSettings() {
-		Intent settingsIntent = new Intent(
-				Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-		startActivity(settingsIntent);
-	}
-
-	public double fmod_360(double theta) {
-		return (((theta % (2 * 180)) + 3 * 180) % (2 * 180)) - 180;
 	}
 
 	public static final int EXIT_SUCCESS = 0;

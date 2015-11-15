@@ -19,7 +19,9 @@ public class AppNativeService extends IntentService {
 	@Override
 	protected void onHandleIntent(Intent intent) {
 		NotificationManager nm = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		if (intent == null) return;
 		String action = intent.getAction();
+		if (action == null) return;
 		Log.d(TAG, action);
 		if (action.equals("START")) {
 			// Service starting. Create a notification.
