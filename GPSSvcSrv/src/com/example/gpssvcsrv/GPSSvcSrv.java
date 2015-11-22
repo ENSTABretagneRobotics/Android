@@ -48,8 +48,11 @@ public class GPSSvcSrv extends Service {
 	double speed;
 	double bearing;
 
-	String previousdata;
-	String latestdata;
+	private final static int MAX_NB_NMEA_SENTENCES = 32;
+	String previousdata[] = new String[MAX_NB_NMEA_SENTENCES];
+	String tempdata[] = new String[MAX_NB_NMEA_SENTENCES];
+	String latestdata[] = new String[MAX_NB_NMEA_SENTENCES];
+	int dataindex = 0;
 
 //	public GPSSvcSrv() {
 //		super(TAG);
@@ -96,6 +99,13 @@ public class GPSSvcSrv extends Service {
 					.getApplication().toString());
 			sdwl.acquire();
 			pwl.acquire();
+
+			// Initialize shared variables.
+			for (int i = 0; i < MAX_NB_NMEA_SENTENCES; i++) {
+				previousdata[i] = "";
+				tempdata[i] = "";
+				latestdata[i] = "";
+			}
 			
 			// Get the Location Manager.
 			locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
@@ -111,7 +121,9 @@ public class GPSSvcSrv extends Service {
 			// low-level GPS protocol.
 			nmeaListener = new GpsStatus.NmeaListener() {
 				public void onNmeaReceived(long timestamp, String nmea) {
-					latestdata = nmea;
+					latestdata[dataindex] = nmea;
+					dataindex++;
+					dataindex = (dataindex%MAX_NB_NMEA_SENTENCES);
 					//Log.d(TAG, nmea);
 				}
 			};
@@ -137,12 +149,9 @@ public class GPSSvcSrv extends Service {
 			};
 
 			// Register the listener with the Location Manager to receive
-			// location
-			// updates from GPS.
+			// location updates from GPS.
 			locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, locationListener);
 
-			previousdata = "";
-			latestdata = "";
 			bStop = false;
 			
 			new NetworkTask().execute("");
@@ -356,19 +365,24 @@ public class GPSSvcSrv extends Service {
 				selector.close();
 
 				if (num != 0) {
-					if (latestdata.compareTo(previousdata) != 0) {					
-						previousdata = latestdata;
-						// Reset to blocking, so we can use blocking reads and writes.
-						sc.configureBlocking(true);
-						Socket s = sc.socket();
+					// Reset to blocking, so we can use blocking reads and writes.
+					sc.configureBlocking(true);
+					Socket s = sc.socket();
 
-						s.setSoTimeout(DEFAULT_SOCK_TIMEOUT);
+					s.setSoTimeout(DEFAULT_SOCK_TIMEOUT);
 
-						s.getOutputStream().write(latestdata.getBytes("UTF-8"));
+					int j0 = dataindex;
+					tempdata = latestdata;
+					for (int i = 0; i < MAX_NB_NMEA_SENTENCES; i++) {
+						int j = (j0+i)%MAX_NB_NMEA_SENTENCES;
+						if (tempdata[j].compareTo(previousdata[j]) != 0) {					
+							previousdata[j] = tempdata[j];
+							s.getOutputStream().write(tempdata[j].getBytes("UTF-8"));
+						}
 					}
 
 					try {
-						Thread.sleep(100);
+						Thread.sleep(50);
 					} catch (InterruptedException e) {
 					}
 				}			

@@ -1,5 +1,3 @@
-trames NMEA de HTC One M8s n'envoie pas assez souvent de GPGGA, RMC à cause de select timeout? comparer nmea.txt de aslogger...
-nmea: faire une file d'une certaine taille pour tout enregistrer?
 
 incompatibilité entre nouveaux projets hello world d'eclipse et notification, partir de projets existants...
 
@@ -39,6 +37,9 @@ pourquoi dans buggy le fait de déplacer le nmeatextview en bas fait tout planter
 
 
 OLD
+
+nmea: faire une file d'une certaine taille pour tout enregistrer?
+trames NMEA de HTC One M8s n'envoie pas assez souvent de GPGGA, RMC à cause de select timeout? comparer nmea.txt de aslogger...
 
 enlever de github dossiers gen, libs, obj et la plupart de bin
 

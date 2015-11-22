@@ -1,7 +1,7 @@
-gen/
-libs/
-obj/
+*/gen/
+*/libs/
+*/obj/
 
-!bin/
-bin/*
-!bin/*.apk
+!*/bin/
+*/bin/*
+!*/bin/*.apk

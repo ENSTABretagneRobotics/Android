@@ -107,7 +107,11 @@ public class AHRSSvcSrv extends Service {
 					.getApplication().toString());
 			sdwl.acquire();
 			pwl.acquire();
-			
+
+			// Initialize shared variables.
+			previousdata = "";
+			latestdata = "";
+
 			// For 2.2 : TYPE_ORIENTATION (but deprecated and probably replaced by
 			// TYPE_ROTATION_VECTOR), TYPE_GYROSCOPE declared but not fully
 			// available until 2.3.
@@ -178,8 +182,6 @@ public class AHRSSvcSrv extends Service {
 			sensorManager.registerListener(accelerometerListener, accelerometer,
 					SensorManager.SENSOR_DELAY_NORMAL);
 
-			previousdata = "";
-			latestdata = "";
 			bStop = false;
 			
 			new NetworkTask().execute("");
