@@ -144,13 +144,13 @@ public class MainActivity extends IOIOActivity {
 		// Define a listener that responds to location updates
 		locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
-				TextView utcTextView = (TextView) findViewById(R.id.utcTextView);
+				TextView utcTextView = (TextView) findViewById(R.id.utcMilliTimeTextView);
 				utcTextView.setText(String.valueOf(location.getTime()));
-				TextView latTextView = (TextView) findViewById(R.id.latTextView);
+				TextView latTextView = (TextView) findViewById(R.id.latitudeTextView);
 				latTextView.setText(String.valueOf(location.getLatitude()));
-				TextView longTextView = (TextView) findViewById(R.id.longTextView);
+				TextView longTextView = (TextView) findViewById(R.id.longitudeTextView);
 				longTextView.setText(String.valueOf(location.getLongitude()));
-				TextView altTextView = (TextView) findViewById(R.id.altTextView);
+				TextView altTextView = (TextView) findViewById(R.id.altitudeTextView);
 				altTextView.setText(String.valueOf(location.getAltitude()));
 				TextView speedTextView = (TextView) findViewById(R.id.speedTextView);
 				speedTextView.setText(String.valueOf(location.getSpeed()));

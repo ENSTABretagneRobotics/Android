@@ -1,9 +1,10 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    android:keepScreenOn="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
+    android:keepScreenOn="true"
+    android:orientation="vertical"
+    tools:context=".MainActivity" >
 
     <ToggleButton
         android:id="@+id/button"
@@ -12,94 +13,203 @@
         android:text="ToggleButton" >
     </ToggleButton>
 
-    <TextView
-        android:id="@+id/xTextView"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="x" />
+        android:orientation="horizontal" >
 
-    <TextView
-        android:id="@+id/yTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="y" />
-    
-    <TextView
-        android:id="@+id/thetaTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="theta" />
-     
-    <TextView
-        android:id="@+id/thetawTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="thetaw" />
-    
-    <TextView
-        android:id="@+id/CurWPTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="CurWP" />
-    
-    <TextView
-        android:id="@+id/azimuthTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="azimuth" />
-    
-    <TextView
-        android:id="@+id/pitchTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="pitch" />
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
 
-    <TextView
-        android:id="@+id/rollTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="roll" />
+            <TextView
+                android:id="@+id/xLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="x: " />
 
-    <TextView
-        android:id="@+id/utcTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="utc" />
+            <TextView
+                android:id="@+id/yLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="y: " />
 
-    <TextView
-        android:id="@+id/latTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="lat" />
+            <TextView
+                android:id="@+id/thetaLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="theta: " />
 
-    <TextView
-        android:id="@+id/longTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="long" />
+            <TextView
+                android:id="@+id/thetawLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="thetaw: " />
 
-    <TextView
-        android:id="@+id/altTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="alt" />
+            <TextView
+                android:id="@+id/CurWPLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CurWP: " />
 
-    <TextView
-        android:id="@+id/speedTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="speed" />
+            <TextView
+                android:id="@+id/azimuthLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Azimuth: " />
 
-    <TextView
-        android:id="@+id/bearingTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="bearing" />
+            <TextView
+                android:id="@+id/pitchLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Pitch: " />
 
-    <TextView
-        android:id="@+id/nmeaTextView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="NMEA" />
+            <TextView
+                android:id="@+id/rollLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Roll: " />
+
+            <TextView
+                android:id="@+id/utcLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="UTC: " />
+
+            <TextView
+                android:id="@+id/latitudeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Latitude: " />
+
+            <TextView
+                android:id="@+id/longitudeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Longitude: " />
+
+            <TextView
+                android:id="@+id/altitudeLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Altitude: " />
+
+            <TextView
+                android:id="@+id/speedLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Speed: " />
+
+            <TextView
+                android:id="@+id/bearingLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Bearing: " />
+
+            <TextView
+                android:id="@+id/nmeaLabel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NMEA: " />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            <TextView
+                android:id="@+id/xTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="x" />
+
+            <TextView
+                android:id="@+id/yTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="y" />
+
+            <TextView
+                android:id="@+id/thetaTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="theta" />
+
+            <TextView
+                android:id="@+id/thetawTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="thetaw" />
+
+            <TextView
+                android:id="@+id/CurWPTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="CurWP" />
+
+            <TextView
+                android:id="@+id/azimuthTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="azimuth" />
+
+            <TextView
+                android:id="@+id/pitchTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="pitch" />
+
+            <TextView
+                android:id="@+id/rollTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="roll" />
+
+            <TextView
+                android:id="@+id/utcMilliTimeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="utcMilliTime" />
+
+            <TextView
+                android:id="@+id/latitudeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="latitude" />
+
+            <TextView
+                android:id="@+id/longitudeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="longitude" />
+
+            <TextView
+                android:id="@+id/altitudeTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="altitude" />
+
+            <TextView
+                android:id="@+id/speedTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="speed" />
+
+            <TextView
+                android:id="@+id/bearingTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="bearing" />
+
+            <TextView
+                android:id="@+id/nmeaTextView"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="NMEA" />
+        </LinearLayout>
+        
+    </LinearLayout>
 
 </LinearLayout>

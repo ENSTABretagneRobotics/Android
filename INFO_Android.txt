@@ -16,16 +16,24 @@ Sleep : il faut utiliser les PARTIAL_WAKE_LOCK et android:keepScreenOn pour tout
 
 
 Apps
+totalcommander et ses plugins réseaux, TypeMail, Bibus, Shazam, GPS Status, GPS Test, VNC Viewer, Adobe Reader, SMS Backup Restore, RAR, VLC, Facebook, Facebook Messenger, Orange TV, DroidEdit, Firefox, OS Monitor, IBM Verse
+DashLight, Stopwatch (équivalent parfois intégré)
+Wireless Mic pour communiquer en audio entre 2 smartphones en Wi-Fi sans Internet
+Google Maps/Chrome/Translate/YouTube/Docs/Slides/Sheets
+Microsoft OneNote/Outlook/Skype/RD Client/RD Client Beta/HERE Maps/Office Mobile/Office Lens/Office Remote/MSN Weather/MSN News (Translator, Word, PowerPoint, Excel... need Android 4.4)
+QR code i-nigma, QuickMark, Tag, Mobiletag, NeoReader, Barcode Scanner
 
 MS RDP met une résolution de 1280*768 quelle que soit la résolution réelle du smartphone et c'est à peu près lisible
+
+bing search, copilot?
 
 
 Review smartphones
 
 Motorola Defy Mini : bonne boussole mais un peu lente, GPS très long à capter et pertes courantes, mais peut-être que ça concerne que l'un de ceux qu'on a...
 LG détecte très facilement GPS, boussole imprécise? Il suffit peut-être de bien calibrer au départ, faire un 8...
-Galaxy S : GPS correct, faire 8 avec boussole, prendre du roulis et du tangage...
-Galaxy S3 Mini : bons capteurs? dérive de l'orientation quand l'écran est éteint?
+Galaxy S : GPS correct, faire 8 avec boussole, prendre du roulis et du tangage... conso 4.7 W max allumé
+Galaxy S3 Mini : bons capteurs? dérive de l'orientation quand l'écran est éteint? conso 4.3 W si allumé
 Galaxy S4 Mini : bons capteurs
 S4 a peut-être un GPS légèrement mieux que S3 mais les 2 sont bons, on dirait qu'ils arrivent à corriger les perturbations magnétiques par moments...
 Sony : mauvaises boussoles?
