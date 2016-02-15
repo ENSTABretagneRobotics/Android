@@ -8,6 +8,7 @@ import java.nio.channels.Selector;
 import java.nio.channels.ServerSocketChannel;
 import java.nio.channels.SocketChannel;
 import java.text.DecimalFormat;
+import java.text.DecimalFormatSymbols;
 
 import android.app.Notification;
 import android.app.NotificationManager;
@@ -22,7 +23,6 @@ import android.hardware.SensorManager;
 import android.os.AsyncTask;
 import android.os.IBinder;
 import android.os.PowerManager;
-import android.provider.Settings;
 import android.util.Log;
 
 public class AHRSSvcSrv extends Service {
@@ -138,7 +138,11 @@ public class AHRSSvcSrv extends Service {
 					// Android, or compute more strictly by using a coordinate system change matrix
 					// and identify the angles in the resulting new Euler matrix (Reuler1=P*Reuler0).
 					
-					DecimalFormat df = new DecimalFormat("0.00");
+					DecimalFormatSymbols otherSymbols = new DecimalFormatSymbols();
+					otherSymbols.setDecimalSeparator('.');
+					otherSymbols.setGroupingSeparator(' ');
+					DecimalFormat df = new DecimalFormat("0.00", otherSymbols);
+					df.setGroupingUsed(false);
 					latestdata = "#YPR="+df.format(fmod_360(azimuth))+","+df.format(-pitch)+","+df.format(-roll)+"\r\n";
 					//Log.d(TAG, latestdata);
 				}
