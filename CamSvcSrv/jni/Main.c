@@ -16,9 +16,13 @@ int LoadConfig()
 	captureperiod = 40;
 	timeout = 5;
 	bForceSoftwareResize = 1;
+	hcenter = 0;//+videoimgwidth/2
+	vcenter = 0;//+videoimgheight/2
 	hscale = 1;
 	vscale = 1;
 	angle = 0*M_PI/180.0;
+	hshift = 0;//+videoimgwidth/2
+	vshift = 0;//+videoimgheight/2
 	bFlip = 0;
 	bUDP = 0;
 	pixcolorchgthreshold = 12; 
@@ -52,12 +56,20 @@ int LoadConfig()
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
 		if (sscanf(line, "%d", &bForceSoftwareResize) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
+		if (sscanf(line, "%lf", &hcenter) != 1) printf("Invalid configuration file.\n");
+		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
+		if (sscanf(line, "%lf", &vcenter) != 1) printf("Invalid configuration file.\n");
+		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
 		if (sscanf(line, "%lf", &hscale) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
 		if (sscanf(line, "%lf", &vscale) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
 		if (sscanf(line, "%lf", &d0) != 1) printf("Invalid configuration file.\n");
 		angle = d0*M_PI/180.0;
+		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
+		if (sscanf(line, "%lf", &hshift) != 1) printf("Invalid configuration file.\n");
+		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
+		if (sscanf(line, "%lf", &vshift) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
 		if (sscanf(line, "%d", &bFlip) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
@@ -409,6 +421,7 @@ THREAD_PROC_RETURN_VALUE handlecam(void* pParam)
 {
 	double m[6]; // For rotation...
 	CvMat M = cvMat(2, 3, CV_64F, m); // For rotation...
+	double hcenter0 = 0, vcenter0 = 0, hshift0 = 0, vshift0 = 0;
 	int nbBytes = 0;
 	char szText[256];
 	unsigned int val = 0;
@@ -467,32 +480,28 @@ THREAD_PROC_RETURN_VALUE handlecam(void* pParam)
 		else resizedframe = frame;
 
 		EnterCriticalSection(&imageCS);
-		if ((hscale == 1)&&(vscale == 1)&&(angle == 0))
+		if ((hcenter == 0)&&(vcenter == 0)&&
+			(hscale == 1)&&(vscale == 1)&&(angle == 0)&&
+			(hshift == 0)&&(vshift == 0))
 		{
 			if (bFlip) cvFlip(resizedframe, image, 1); else cvCopy(resizedframe, image, 0);
 		}
 		else
 		{
 			// Create a map_matrix, where the left 2x2 matrix is the transform and the right 2x1 is the dimensions.
-			//double hscale = 0.5, vscale = 1.33*0.5;
+
+			hcenter0 = resizedframe->width*0.5+hcenter;
+			vcenter0 = resizedframe->height*0.5+vcenter;
+			hshift0 = resizedframe->width*0.5+hshift;
+			vshift0 = resizedframe->height*0.5+vshift;
+
 			m[0] = cos(angle)/hscale;
 			m[1] = sin(angle)/hscale;
 			m[3] = -sin(angle)/vscale;
 			m[4] = cos(angle)/vscale;
-			m[2] = (1-cos(angle)/hscale)*resizedframe->width*0.5-(sin(angle)/hscale)*resizedframe->height*0.5;  
-			m[5] = (sin(angle)/vscale)*resizedframe->width*0.5+(1-cos(angle)/vscale)*resizedframe->height*0.5;
+			m[2] = (1-cos(angle)/hscale)*hshift0-(sin(angle)/hscale)*vshift0+hcenter0-hshift0;  
+			m[5] = (sin(angle)/vscale)*hshift0+(1-cos(angle)/vscale)*vshift0+vcenter0-vshift0;
 			cvWarpAffine(resizedframe, image, &M, CV_INTER_LINEAR+CV_WARP_FILL_OUTLIERS+CV_WARP_INVERSE_MAP, cvScalarAll(0));
-
-			//double hscale = 1.33*0.5, vscale = 0.5;
-			//m[0] = hscale*cos(-angle);
-			//m[1] = hscale*sin(-angle);
-			//m[3] = vscale*-sin(-angle);
-			//m[4] = vscale*cos(-angle);
-			//m[2] = (1-hscale*cos(-angle))*resizedframe->width*0.5-hscale*sin(-angle)*resizedframe->height*0.5;  
-			//m[5] = vscale*sin(-angle)*resizedframe->width*0.5+(1-vscale*cos(-angle))*resizedframe->height*0.5;
-			////cvGetQuadrangleSubPix(resizedframe, image, &M);
-			////cv2DRotationMatrix(cvPoint2D32f(resizedframe->width*0.5,resizedframe->height*0.5), -angle*180.0/M_PI, scale, &M);
-			//cvWarpAffine(resizedframe, image, &M, CV_INTER_LINEAR+CV_WARP_FILL_OUTLIERS, cvScalarAll(0));
 
 			if (bFlip) cvFlip(image, NULL, 1);
 		}
@@ -683,6 +692,7 @@ int main(int argc, char* argv[])
 #endif // __ANDROID__	
 	double m[6]; // For rotation...
 	CvMat M = cvMat(2, 3, CV_64F, m); // For rotation...
+	double hcenter0 = 0, vcenter0 = 0, hshift0 = 0, vshift0 = 0;
 	THREAD_IDENTIFIER handlecamThreadId;
 	char videorecordfilename[256];
 	int i = 0;
@@ -714,7 +724,7 @@ int main(int argc, char* argv[])
 
 	cvInitFont(&font, CV_FONT_HERSHEY_SIMPLEX, 0.5, 0.5, 0, 1, 8);
 
-	if ((strlen(szDevPath) == 1)&&(isdigit((unsigned char)szDevPath[0])))
+	if ((strlen(szDevPath) == 1)&&(isdigit(szDevPath[0])))
 	{
 		webcam = cvCreateCameraCapture(atoi(szDevPath));
 	}
@@ -771,32 +781,28 @@ int main(int argc, char* argv[])
 		return EXIT_FAILURE;
 	}
 
-	if ((angle == 0)&&(hscale == 1)&&(vscale == 1))
+	if ((hcenter == 0)&&(vcenter == 0)&&
+		(hscale == 1)&&(vscale == 1)&&(angle == 0)&&
+		(hshift == 0)&&(vshift == 0))
 	{
 		if (bFlip) cvFlip(resizedframe, image, 1); else cvCopy(resizedframe, image, 0);
 	}
 	else
 	{
 		// Create a map_matrix, where the left 2x2 matrix is the transform and the right 2x1 is the dimensions.
-		//double hscale = 0.5, vscale = 1.33*0.5;
+
+		hcenter0 = resizedframe->width*0.5+hcenter;
+		vcenter0 = resizedframe->height*0.5+vcenter;
+		hshift0 = resizedframe->width*0.5+hshift;
+		vshift0 = resizedframe->height*0.5+vshift;
+
 		m[0] = cos(angle)/hscale;
 		m[1] = sin(angle)/hscale;
 		m[3] = -sin(angle)/vscale;
 		m[4] = cos(angle)/vscale;
-		m[2] = (1-cos(angle)/hscale)*resizedframe->width*0.5-(sin(angle)/hscale)*resizedframe->height*0.5;  
-		m[5] = (sin(angle)/vscale)*resizedframe->width*0.5+(1-cos(angle)/vscale)*resizedframe->height*0.5;
+		m[2] = (1-cos(angle)/hscale)*hshift0-(sin(angle)/hscale)*vshift0+hcenter0-hshift0;  
+		m[5] = (sin(angle)/vscale)*hshift0+(1-cos(angle)/vscale)*vshift0+vcenter0-vshift0;
 		cvWarpAffine(resizedframe, image, &M, CV_INTER_LINEAR+CV_WARP_FILL_OUTLIERS+CV_WARP_INVERSE_MAP, cvScalarAll(0));
-
-		//double hscale = 1.33*0.5, vscale = 0.5;
-		//m[0] = hscale*cos(-angle);
-		//m[1] = hscale*sin(-angle);
-		//m[3] = vscale*-sin(-angle);
-		//m[4] = vscale*cos(-angle);
-		//m[2] = (1-hscale*cos(-angle))*resizedframe->width*0.5-hscale*sin(-angle)*resizedframe->height*0.5;  
-		//m[5] = vscale*sin(-angle)*resizedframe->width*0.5+(1-vscale*cos(-angle))*resizedframe->height*0.5;
-		////cvGetQuadrangleSubPix(resizedframe, image, &M);
-		////cv2DRotationMatrix(cvPoint2D32f(resizedframe->width*0.5,resizedframe->height*0.5), -angle*180.0/M_PI, scale, &M);
-		//cvWarpAffine(resizedframe, image, &M, CV_INTER_LINEAR+CV_WARP_FILL_OUTLIERS, cvScalarAll(0));
 
 		if (bFlip) cvFlip(image, NULL, 1);
 	}
@@ -810,9 +816,17 @@ int main(int argc, char* argv[])
 			//CV_FOURCC('D','I','V','X'), 
 			//CV_FOURCC('I', 'Y', 'U', 'V'), 
 #else
+#ifdef USE_ALTERNATE_RECORDING
+		sprintf(videorecordfilename, "video_%.64s.avi", strtime_fns());
+		videorecordfile = cvCreateVideoWriter(videorecordfilename, 
+			CV_FOURCC('M','J','P','G'), 
+			//CV_FOURCC('D','I','V','X'), 
+			//CV_FOURCC('I', 'Y', 'U', 'V'), 
+#else
 		sprintf(videorecordfilename, "video_%.64s.wmv", strtime_fns());
 		videorecordfile = cvCreateVideoWriter(videorecordfilename, 
 			CV_FOURCC('W','M','V','2'), 
+#endif // USE_ALTERNATE_RECORDING
 #endif // __ANDROID__
 #ifdef DISABLE_TIMER_RECORDING
 			1000.0/(double)(captureperiod+20), // 20 ms is an approximation of the extra time spent for computations...

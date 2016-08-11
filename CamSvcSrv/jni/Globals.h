@@ -17,6 +17,13 @@
 #endif // DISABLE_TIMER_RECORDING
 #include "OSNet.h"
 #include "CvCore.h"
+#ifdef ENABLE_CVKINECT2SDKHOOK
+#ifndef INCLUDE_HEADERS_OUTSIDE_CVKINECT2SDKHOOK
+#define INCLUDE_HEADERS_OUTSIDE_CVKINECT2SDKHOOK
+#endif // INCLUDE_HEADERS_OUTSIDE_CVKINECT2SDKHOOK
+#include <Kinect.h>
+#include "CvKinect2SDKHook.h"
+#endif // ENABLE_CVKINECT2SDKHOOK
 
 // Use SOMAXCONN as the max number of simultaneous clients for multithreaded version...
 
@@ -49,9 +56,13 @@ EXTERN_C int videoimgheight;
 EXTERN_C int captureperiod;
 EXTERN_C int timeout;
 EXTERN_C BOOL bForceSoftwareResize;
+EXTERN_C double hcenter;
+EXTERN_C double vcenter;
 EXTERN_C double hscale;
 EXTERN_C double vscale;
 EXTERN_C double angle;
+EXTERN_C double hshift;
+EXTERN_C double vshift;
 EXTERN_C int bFlip;
 EXTERN_C BOOL bUDP;
 EXTERN_C int pixcolorchgthreshold; 

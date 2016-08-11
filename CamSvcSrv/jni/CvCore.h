@@ -56,24 +56,29 @@ Version status : Not finished
 #endif // __GNUC__
 
 // OpenCV headers.
-#if defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV248) || defined(OPENCV249) || defined(OPENCV2411)
+#if defined(OPENCV220) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249) || defined(OPENCV2413) || defined(OPENCV310)
+// To try to solve cvRound() undefined problem in C mode in OpenCV 3.1.0...
+#if defined(OPENCV310)
+#include "opencv2/core/fast_math.hpp"
+#endif // defined(OPENCV310)
 //#include "opencv/cv.h" // Sometimes cause strange errors in debug and C++ mode due to the redefinition of free()...
-#include "opencv/cvwimage.h"
-#include "opencv/cxcore.h"
-#include "opencv/highgui.h"
+//#include "opencv/cvwimage.h"
+//#include "opencv/cxcore.h"
+//#include "opencv/highgui.h"
+#include "opencv2/core/core_c.h"
 #include "opencv2/imgproc/imgproc_c.h"
-// The following headers do not build in C mode.
+#include "opencv2/highgui/highgui_c.h"
+// The 3 following headers do not build in C mode.
 #ifdef __cplusplus
 #include "opencv/cvaux.h"
-#include "opencv/cxmisc.h"
-#include "opencv/ml.h"
-#endif // __cplusplus
-#ifdef __cplusplus
+//#include "opencv/cxmisc.h"
+//#include "opencv/ml.h"
 #include "opencv2/core/core.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 #include "opencv2/highgui/highgui.hpp"
-#include "opencv2/contrib/contrib.hpp"
+//#include "opencv2/contrib/contrib.hpp"
 #endif // __cplusplus
-// min and max may be undefined by OpenCV 2.X.X so we need to redefine them here.
+// min and max may be undefined by OpenCV 2.X.X so we need to redefine them here...
 #if !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
 #ifndef max
 #define max(a,b) (((a) > (b)) ? (a) : (b))
@@ -86,7 +91,7 @@ Version status : Not finished
 #include "cv.h"
 #include "cvaux.h"
 #include "highgui.h"
-#endif // defined(OPENCV220) || defined(OPENCV230) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249)
+#endif // defined(OPENCV220) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249) || defined(OPENCV2413) || defined(OPENCV310)
 
 #ifdef __GNUC__
 // Restore the GCC warnings previously disabled for OpenCV.
