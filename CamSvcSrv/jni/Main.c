@@ -42,7 +42,7 @@ int LoadConfig()
 	if (file != NULL)
 	{
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
-		if (sscanf(line, "%[^\n]255s", szDevPath) != 1) printf("Invalid configuration file.\n");
+		if (sscanf(line, "%[^\r\n]255s", szDevPath) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");
 		if (sscanf(line, "%255s", srvport) != 1) printf("Invalid configuration file.\n");
 		if (fgets3(file, line, sizeof(line)) == NULL) printf("Invalid configuration file.\n");

@@ -12,9 +12,16 @@ Fabrice Le Bars
 
 Created : 2009-03-26
 
-Version status : Not finished
-
 ***************************************************************************************************************:)*/
+
+// Prevent Visual Studio Intellisense from defining _WIN32 and _MSC_VER when we use 
+// Visual Studio to edit Linux or Borland C++ code.
+#ifdef __linux__
+#	undef _WIN32
+#endif // __linux__
+#if defined(__GNUC__) || defined(__BORLANDC__)
+#	undef _MSC_VER
+#endif // defined(__GNUC__) || defined(__BORLANDC__)
 
 #ifndef CVCORE_H
 #define CVCORE_H
@@ -22,7 +29,7 @@ Version status : Not finished
 #include "OSTime.h"
 
 #ifdef _MSC_VER
-// Disable some Visual Studio warnings that happen sometimes in OpenCV.
+// Disable some Visual Studio warnings.
 #pragma warning(disable : 4100) 
 #pragma warning(disable : 4458) 
 #pragma warning(disable : 4996)
@@ -33,30 +40,36 @@ Version status : Not finished
 #endif // _MSC_VER
 
 #ifdef __BORLANDC__
-// Disable some Borland C++ Builder warnings that happen sometimes in OpenCV.
+// Disable some Borland C++ Builder warnings.
 #pragma warn -8019
 #endif // __BORLANDC__
 
 #ifdef __GNUC__
-// Disable some GCC warnings that happen sometimes in OpenCV.
+// Disable some GCC warnings.
 //#pragma GCC diagnostic ignored "-Wunused-parameter"
 //#pragma GCC diagnostic ignored "-Wunused-variable"
 //#pragma GCC diagnostic ignored "-Wunused-value"
 #pragma GCC diagnostic ignored "-Wunused-function"
-//#pragma GCC diagnostic ignored "-Wunused"
 //#pragma GCC diagnostic ignored "-Wunused"
 //#pragma GCC diagnostic ignored "-Wcomment"
 //#pragma GCC diagnostic ignored "-Wuninitialized"
 //#pragma GCC diagnostic ignored "-Wunknown-pragmas"
 #if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #pragma GCC diagnostic push
-#else
-//#pragma GCC diagnostic ignored "-Wpragmas"
 #endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #endif // __GNUC__
 
 // OpenCV headers.
 #if defined(OPENCV220) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249) || defined(OPENCV2413) || defined(OPENCV310)
+// min and max might cause incompatibilities...
+#if !defined(DISABLE_MINMAX_UNDEFINITION)
+#ifdef max
+#undef max
+#endif // max
+#ifdef min
+#undef min
+#endif // min
+#endif // !defined(DISABLE_MINMAX_UNDEFINITION)
 // To try to solve cvRound() undefined problem in C mode in OpenCV 3.1.0...
 #if defined(OPENCV310)
 #include "opencv2/core/fast_math.hpp"
@@ -78,7 +91,8 @@ Version status : Not finished
 #include "opencv2/highgui/highgui.hpp"
 //#include "opencv2/contrib/contrib.hpp"
 #endif // __cplusplus
-// min and max may be undefined by OpenCV 2.X.X so we need to redefine them here...
+// min and max may be undefined so we need to redefine them here...
+#if !defined(DISABLE_MINMAX_REDEFINITION)
 #if !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
 #ifndef max
 #define max(a,b) (((a) > (b)) ? (a) : (b))
@@ -87,6 +101,7 @@ Version status : Not finished
 #define min(a,b) (((a) < (b)) ? (a) : (b))
 #endif // min
 #endif // !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
+#endif // !defined(DISABLE_MINMAX_REDEFINITION)
 #else
 #include "cv.h"
 #include "cvaux.h"
@@ -94,15 +109,13 @@ Version status : Not finished
 #endif // defined(OPENCV220) || defined(OPENCV231) || defined(OPENCV242) || defined(OPENCV249) || defined(OPENCV2413) || defined(OPENCV310)
 
 #ifdef __GNUC__
-// Restore the GCC warnings previously disabled for OpenCV.
+// Restore the GCC warnings previously disabled.
 #if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #pragma GCC diagnostic pop
 #else
-//#pragma GCC diagnostic warning "-Wpragmas"
 //#pragma GCC diagnostic warning "-Wunknown-pragmas"
 //#pragma GCC diagnostic warning "-Wuninitialized"
 //#pragma GCC diagnostic warning "-Wcomment"
-//#pragma GCC diagnostic warning "-Wunused"
 //#pragma GCC diagnostic warning "-Wunused"
 #pragma GCC diagnostic warning "-Wunused-function"
 //#pragma GCC diagnostic warning "-Wunused-value"
@@ -112,12 +125,12 @@ Version status : Not finished
 #endif // __GNUC__
 
 #ifdef __BORLANDC__
-// Restore the Borland C++ Builder warnings previously disabled for OpenCV.
+// Restore the Borland C++ Builder warnings previously disabled.
 #pragma warn .8019
 #endif // __BORLANDC__
 
 #ifdef _MSC_VER
-// Restore the Visual Studio warnings previously disabled for OpenCV.
+// Restore the Visual Studio warnings previously disabled.
 #pragma warning(default : 6385)
 #pragma warning(default : 6294)
 #pragma warning(default : 6201)

@@ -30,8 +30,8 @@ Review smartphones
 
 Motorola Defy Mini : bonne boussole mais un peu lente, GPS très long à capter et pertes courantes, mais peut-être que ça concerne que l'un de ceux qu'on a...
 LG détecte très facilement GPS, boussole imprécise? Il suffit peut-être de bien calibrer au départ, faire un 8...
-Samsung Galaxy S : GPS correct, faire 8 avec boussole, prendre du roulis et du tangage... conso 4.7 W max allumé
-Samsung Galaxy S3 Mini : bons capteurs? dérive de l'orientation quand l'écran est éteint? conso 4.3 W si allumé
+Samsung Galaxy S (CyanogenMod Android 4.1.2) : GPS correct, faire 8 avec boussole, prendre du roulis et du tangage... Front cam (id 1) marche avec OpenCV mais pas back cam (id 0)... conso 4.7 W max allumé
+Samsung Galaxy S3 Mini (Android 4.1.2) : bons capteurs? dérive de l'orientation quand l'écran est éteint? Back cam (id 0) et front cam (id 1) marchent avec OpenCV...  conso 4.3 W si allumé
 Samsung Galaxy S4 Mini : bons capteurs
 S4 a peut-être un GPS légèrement mieux que S3 mais les 2 sont bons, on dirait qu'ils arrivent à corriger les perturbations magnétiques par moments...
 Sony : mauvaises boussoles?
