@@ -25,7 +25,7 @@ ASLogger
 difficile d'être sûr que les nombres seront bien dans le format 111111111.111 à cause des locales (séparateur décimal, séparateur milliers...)
 renommer ASLogger en INSLog?
 
-C peut être compilé avec Code Sourcery arm-none-linux-gnueabi, compiler en static pour que ça puisse utiliser glibc car avec NDK ily a bionic à la place de glibc...
+C peut être compilé avec Code Sourcery arm-none-linux-gnueabi, compiler en static pour que ça puisse utiliser glibc car avec NDK il y a bionic à la place de glibc...
 
 regarder threads ou autre de thibault, timer dans dossier android/smarttracker
 timer ou Runnable and h2 Handler?

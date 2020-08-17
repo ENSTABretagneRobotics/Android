@@ -33,6 +33,8 @@ _ Borland C++ Builder : __BORLANDC__
 
 _ GCC : __GNUC__
 
+_ clang : __clang__
+
 Predefined macros depending on the target operating system : 
 
 _ 32 bit Windows : _WIN32 & !_WIN64
@@ -48,6 +50,8 @@ _ 32 and 64 bit Linux : __linux__
 _ 64 bit Linux : __linux__ & _LP64
 
 _ Android : __ANDROID__
+
+_ Mac OS : __APPLE__
 
 _ Windows CE : WINCE
 
@@ -72,10 +76,10 @@ _ Windows CE : WINCE
 #if defined(UNICODE) || defined(_UNICODE)
 #ifndef UNICODE
 #define UNICODE
-#endif // UNICODE
+#endif // !UNICODE
 #ifndef _UNICODE
 #define _UNICODE
-#endif // _UNICODE
+#endif // !_UNICODE
 #endif // defined(UNICODE) || defined(_UNICODE)
 #endif // __GNUC__
 #endif // _WIN32
@@ -95,7 +99,7 @@ _ Windows CE : WINCE
 //#		define _CRT_NONSTDC_NO_WARNINGS
 //#	endif // _CRT_NONSTDC_NO_WARNINGS
 
-// To avoid compiler warnings about functions compiled as native code (if CLR).
+// To avoid compiler warnings about functions compiled as native code (if /clr).
 #	if defined(__cplusplus) && defined(_M_CEE)
 #		pragma warning(disable : 4793)
 #	endif // defined(__cplusplus) && defined(_M_CEE)
@@ -177,11 +181,17 @@ _ Windows CE : WINCE
 #ifndef WINCE
 #include <errno.h> // Error Codes Reported by (Some) Library Functions.
 #include <signal.h> // Signals.
-#endif // WINCE
+#endif // !WINCE
 
-#ifdef __GNUC__
-// C99 headers. Some headers are not supported by all the compilers or depends 
+// C99 headers. Some headers are not supported by all the compilers or depend 
 // on its options.
+#ifdef __GNUC__
+
+// See https://stackoverflow.com/questions/3233054/error-int32-max-was-not-declared-in-this-scope
+#ifndef __STDC_LIMIT_MACROS
+#define __STDC_LIMIT_MACROS
+#endif // !__STDC_LIMIT_MACROS
+
 //#include <complex.h> // Complex arithmetic.
 //#include <fenv.h> // IEEE-style floating-point arithmetic.
 //#include <inttypes.h> // Integer types.
@@ -192,10 +202,13 @@ _ Windows CE : WINCE
 //#include <wchar.h> // Wide streams and several kinds of strings.
 //#include <wctype.h> // Wide characters.
 #endif // __GNUC__
+#if defined(_MSC_VER) && _MSC_VER >= 1600
+#include <stdint.h>
+#endif // defined(_MSC_VER) && _MSC_VER >= 1600
 
 #ifndef WINCE
 #include <fcntl.h>
-#endif // WINCE
+#endif // !WINCE
 
 #ifdef _WIN32
 #include <tchar.h>
@@ -203,7 +216,7 @@ _ Windows CE : WINCE
 // This must be done if we plan to include Winsock2.h in other files.
 #ifndef WIN32_LEAN_AND_MEAN
 #define WIN32_LEAN_AND_MEAN
-#endif // WIN32_LEAN_AND_MEAN
+#endif // !WIN32_LEAN_AND_MEAN
 #include <windows.h>
 #else 
 #include <unistd.h>
@@ -223,7 +236,7 @@ _ Windows CE : WINCE
 #else
 #define EXTERN_C extern 
 #endif // __cplusplus
-#endif // EXTERN_C
+#endif // !EXTERN_C
 
 #ifndef __cplusplus
 #ifndef inline
@@ -235,19 +248,20 @@ _ Windows CE : WINCE
 #endif // __BORLANDC__
 #ifdef __GNUC__
 // extern __inline__ in ws2tcpip.h for GNU?
+#ifdef _WIN32
+#if (__MINGW_GNUC_PREREQ(4, 3) && __STDC_VERSION__ >= 199901L) || (defined (__clang__))
+// Problem with the use of inline in _mingw.h for WS2TCPIP_INLINE...
+#include <ws2tcpip.h>
 #define inline static __inline__
+#else
+#define inline static __inline__
+#endif // (__MINGW_GNUC_PREREQ(4, 3) && __STDC_VERSION__ >= 199901L) || (defined (__clang__))
+#else
+#define inline static __inline__
+#endif // _WIN32
 #endif // __GNUC__
-#endif // inline
-#endif // __cplusplus
-
-#if !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
-#ifndef max
-#define max(a,b) (((a) > (b)) ? (a) : (b))
-#endif // max
-#ifndef min
-#define min(a,b) (((a) < (b)) ? (a) : (b))
-#endif // min
-#endif // !defined(NOMINMAX) || defined(FORCE_MINMAX_DEFINITION)
+#endif // !inline
+#endif // !__cplusplus
 
 #ifndef _WIN32
 typedef char CHAR;
@@ -259,7 +273,7 @@ typedef unsigned int UINT;
 typedef long LONG;
 typedef unsigned long ULONG;
 typedef float FLOAT;
-#endif // _WIN32
+#endif // !_WIN32
 typedef double DOUBLE;
 
 #ifdef __GNUC__
@@ -292,31 +306,42 @@ typedef double DOUBLE;
 #endif
 #endif // WINCE
 
+// The definition of M_PI and M_PI_2 is not in C++ standard, although it is often provided by compilers...
+#ifndef M_PI
+#define M_PI 3.14159265358979323846
+#endif // !M_PI
+#ifndef M_PI_2
+#define M_PI_2 1.57079632679489661923
+#endif // !M_PI_2
+
 #ifndef _WIN32
 //#ifndef ZeroMemory
 #define ZeroMemory(Destination,Length) memset((Destination),0,(Length))
-//#endif // ZeroMemory
+//#endif // !ZeroMemory
 typedef void* HANDLE;
 //#ifndef INVALID_HANDLE_VALUE
 #define INVALID_HANDLE_VALUE ((HANDLE)-1)
-//#endif // INVALID_HANDLE_VALUE
+//#endif // !INVALID_HANDLE_VALUE
 typedef int                 BOOL;
 #ifndef FALSE
 #define FALSE               0
-#endif // FALSE
+#endif // !FALSE
 #ifndef TRUE
 #define TRUE                1
-#endif // TRUE
-typedef unsigned int		u_int;
-typedef unsigned char       BYTE;
-typedef unsigned short      WORD;
-typedef unsigned long       DWORD;
-typedef BYTE                BOOLEAN;           
-#endif // _WIN32
+#endif // !TRUE
+typedef unsigned int u_int;
+typedef unsigned char BYTE;
+typedef unsigned short WORD;
+typedef unsigned int DWORD;
+typedef BYTE BOOLEAN;           
+#endif // !_WIN32
 
+// Might depend on the platform...
+#ifndef DISABLE_UINT8_16_32_TYPEDEF
 typedef unsigned char uint8;
 typedef unsigned short uint16;
-typedef unsigned int uint32; // Might be unsigned long...
+typedef unsigned int uint32;
+#endif // !DISABLE_UINT8_16_32_TYPEDEF
 
 // Conflict with OpenCV...
 #ifdef ENABLE_INT64_TYPEDEF
@@ -330,53 +355,47 @@ typedef uint64_t uint64;
 #endif // defined(_MSC_VER) || defined(__BORLANDC__)
 #endif // ENABLE_INT64_TYPEDEF
 
-// Might vary also and should be moved elsewhere...
-union uShort
-{
-	uint16 v;  
-	uint8 c[2];
-};
-typedef union uShort uShort;
-
-union uLong
-{
-	long v;  
-	uint8 c[4];
-};
-typedef union uLong uLong;
-
-union uFloat
-{
-	float v;  
-	uint8 c[4];
-};
-typedef union uFloat uFloat;
+#ifndef DISABLE_OLD_MSC_VER_INT_T_TYPEDEF
+#if defined(_MSC_VER) || defined(__BORLANDC__)
+#if _MSC_VER >= 1600
+#else
+typedef __int8 int8_t;
+typedef __int16 int16_t;
+typedef __int32 int32_t;
+typedef __int64 int64_t;
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int32 uint32_t;
+typedef unsigned __int64 uint64_t;
+#endif // _MSC_VER >= 1600
+#endif // defined(_MSC_VER) || defined(__BORLANDC__)
+#endif // !DISABLE_OLD_MSC_VER_INT_T_TYPEDEF
 
 #ifndef _WIN32
 typedef union _LARGE_INTEGER {
 	struct {
-		unsigned long LowPart;
-		long HighPart;
+		unsigned int LowPart;
+		int HighPart;
 	};
 	struct {
-		unsigned long LowPart;
-		long HighPart;
+		unsigned int LowPart;
+		int HighPart;
 	} u;
 	long long QuadPart;
 } LARGE_INTEGER;
 
 typedef union _ULARGE_INTEGER {
 	struct {
-		unsigned long LowPart;
-		unsigned long HighPart;
+		unsigned int LowPart;
+		unsigned int HighPart;
 	};
 	struct {
-		unsigned long LowPart;
-		unsigned long HighPart;
+		unsigned int LowPart;
+		unsigned int HighPart;
 	} u;
 	unsigned long long QuadPart;
 } ULARGE_INTEGER;
-#endif // _WIN32
+#endif // !_WIN32
 
 /*
 Structure corresponding to a color in a RGB format (red, green and blue
@@ -410,6 +429,37 @@ inline RGBCOLOR rgbcolor(UCHAR r, UCHAR g, UCHAR b)
 #	endif // INIT_DEBUG
 #endif // defined(_MSC_VER) && defined(_DEBUG) && !defined(DISABLE_ADDITIONAL_DEBUG_FEATURES)
 
+#ifndef DISABLE_USE_SNPRINTF
+#if defined(_MSC_VER) && _MSC_VER < 1900
+#define snprintf c99_snprintf
+#define vsnprintf c99_vsnprintf
+
+__inline int c99_vsnprintf(char *outBuf, size_t size, const char *format, va_list ap)
+{
+	int count = -1;
+
+	if (size != 0)
+		count = _vsnprintf_s(outBuf, size, _TRUNCATE, format, ap);
+	if (count == -1)
+		count = _vscprintf(format, ap);
+
+	return count;
+}
+
+__inline int c99_snprintf(char *outBuf, size_t size, const char *format, ...)
+{
+	int count;
+	va_list ap;
+
+	va_start(ap, format);
+	count = c99_vsnprintf(outBuf, size, format, ap);
+	va_end(ap);
+
+	return count;
+}
+#endif // defined(_MSC_VER) && _MSC_VER < 1900
+#endif // DISABLE_USE_SNPRINTF
+
 /*
 enum EXIT_CODE
 {
@@ -426,15 +476,16 @@ enum EXIT_CODE
 #define EXIT_NAME_TOO_LONG 5
 #define EXIT_OUT_OF_MEMORY 6
 #define EXIT_OBJECT_NONSIGNALED 7
-#define EXIT_KILLED_THREAD 8
-#define EXIT_CANCELED_THREAD 9
-#define EXIT_IO_PENDING 10
-#define EXIT_KILLED_PROCESS 11
-#define EXIT_CHANGED 12
-#define EXIT_NOT_CHANGED 13
-#define EXIT_FOUND 14
-#define EXIT_NOT_FOUND 15
-#define EXIT_NOT_IMPLEMENTED 16
+#define EXIT_TOO_MANY_SEMAPHORES 8
+#define EXIT_KILLED_THREAD 9
+#define EXIT_CANCELED_THREAD 10
+#define EXIT_IO_PENDING 11
+#define EXIT_KILLED_PROCESS 12
+#define EXIT_CHANGED 13
+#define EXIT_NOT_CHANGED 14
+#define EXIT_FOUND 15
+#define EXIT_NOT_FOUND 16
+#define EXIT_NOT_IMPLEMENTED 17
 
 // Strings corresponding to the previous return values.
 EXTERN_C const char* szOSUtilsErrMsgs[];
@@ -486,8 +537,8 @@ EXTERN_C char* FormatLastErrorMsg(char* buf, int buflen);
 
 #ifdef __GNUC__
 // Disable some GCC warnings.
-#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
+#pragma GCC diagnostic ignored "-Wunused-but-set-variable"
 #pragma GCC diagnostic push
 #endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #endif // __GNUC__
@@ -512,8 +563,6 @@ EXTERN_C char* FormatLastErrorMsg(char* buf, int buflen);
 // Restore the GCC warnings previously disabled.
 #if (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #pragma GCC diagnostic pop
-#else
-#pragma GCC diagnostic warning "-Wunused-but-set-variable"
 #endif // (((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
 #endif // __GNUC__
 
@@ -604,4 +653,4 @@ Debug macros specific to OSCore.
 #	define PRINT_DEBUG_ERROR_OSCORE(params)
 #endif // _DEBUG_ERRORS_OSCORE
 
-#endif // OSCORE_H
+#endif // !OSCORE_H

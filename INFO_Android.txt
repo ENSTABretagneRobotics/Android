@@ -16,7 +16,7 @@ Sleep : il faut utiliser les PARTIAL_WAKE_LOCK et android:keepScreenOn pour tout
 
 
 Apps
-totalcommander et ses plugins réseaux, Bibus, Shazam, GPS Status, GPS Test, VNC Viewer, Adobe Reader, SMS Backup Restore, RAR, VLC, Facebook, Facebook Messenger, Orange TV, DroidEdit, Firefox, OS Monitor, Wifi Analyzer, Network Mapper, CoPilot GPS, My Sosh, SJCAM ZONE, SNCF, GitHub, u-center, CPU-Z, NoMachine, MATLAB, OpenVPN
+totalcommander et ses plugins réseaux, Bibus, Shazam, GPS Status, GPS Test, VNC Viewer, Adobe Reader, SMS Backup Restore, RAR, VLC, Facebook, Facebook Messenger, Orange TV, DroidEdit, Firefox, OS Monitor, Wifi Analyzer, Network Mapper, CoPilot GPS, My Sosh, SJCAM ZONE, SNCF, GitHub, u-center, CPU-Z, Moasure, Sound Meter, GStreamer Webcam, NoMachine, MATLAB, OpenVPN, GoPro, SwellCam, SwellPro Fly, OpenCPN, QGroundControl, NotifiCon, Discord, WhatsApp
 DashLight, Stopwatch (équivalent parfois intégré)
 Wireless Mic pour communiquer en audio entre 2 smartphones en Wi-Fi sans Internet
 Google Maps/Chrome/Translate/YouTube/Docs/Slides/Sheets

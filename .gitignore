@@ -1,7 +1,14 @@
+.metadata
+RemoteSystemsTempFiles
+
 */gen/
 */libs/
 */obj/
+*/.settings
 
 !*/bin/
 */bin/*
 !*/bin/*.apk
+
+CamSvcSrv/jni/Upgrade.bat
+OpenCV-android-sdk

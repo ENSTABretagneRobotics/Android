@@ -69,7 +69,7 @@ Debug macros specific to OSTime.
 #endif // ENABLE_GETTIMEOFDAY_WIN32
 #else
 #include <sys/time.h>
-#endif // ENABLE_SYS_TIME_H_WIN32
+#endif // !ENABLE_SYS_TIME_H_WIN32
 #else 
 // CLOCK_MONOTONIC is a clock that cannot be set and represents monotonic time since 
 // some unspecified starting point.
@@ -77,11 +77,13 @@ Debug macros specific to OSTime.
 // hardware-based time that is not subject to NTP adjustments.
 #ifndef CLOCK_MONOTONIC_RAW 
 #define CLOCK_MONOTONIC_RAW CLOCK_MONOTONIC
-#endif // CLOCK_MONOTONIC_RAW 
+#endif // !CLOCK_MONOTONIC_RAW 
 #endif // _WIN32
 
 EXTERN_C char strftime_m_tmpbuf[64]; // Used to store the string returned by strtime_m().
+EXTERN_C char strftimeex_m_tmpbuf[64]; // Used to store the string returned by strtimeex_m().
 EXTERN_C char strftime_fns_tmpbuf[64]; // Used to store the string returned by strtime_fns().
+EXTERN_C char strftimeex_fns_tmpbuf[64]; // Used to store the string returned by strtimeex_fns().
 
 #ifndef USE_OLD_CHRONO
 #ifdef _WIN32
@@ -106,7 +108,9 @@ struct CHRONO
 typedef struct CHRONO CHRONO;
 #endif // _WIN32
 #else
-#if defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
+// See https://stackoverflow.com/questions/43295845/is-the-clocks-per-sec-value-wrong-inside-a-virtual-machine
+#if (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
+//#if defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
 /*
 Structure for a basic chronometer.
 Might not work correctly if used during more than approximately 68 years. 
@@ -135,8 +139,9 @@ struct CHRONO
 	BOOL Suspended; // Used to know if the chronometer is currently suspended.
 };
 typedef struct CHRONO CHRONO;
-#endif // defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
-#endif // USE_OLD_CHRONO
+#endif // (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
+//#endif // defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
+#endif // !USE_OLD_CHRONO
 
 #ifdef _WIN32
 #ifndef ENABLE_SYS_TIME_H_WIN32
@@ -271,7 +276,7 @@ inline int gettimeofday(struct timeval* tv, struct timezone* tz)
 //	TVal->tv_usec = (unsigned int)(Ticks % 10000000) / 10;
 //}
 #endif // ENABLE_GETTIMEOFDAY_WIN32
-#endif // ENABLE_SYS_TIME_H_WIN32
+#endif // !ENABLE_SYS_TIME_H_WIN32
 #endif // _WIN32
 
 #ifndef _WIN32
@@ -290,36 +295,115 @@ inline DWORD GetTickCount(void)
 
 	return (DWORD)((tv.tv_sec*1000)+(tv.tv_usec/1000));
 }
-#endif // _WIN32
+#endif // !_WIN32
 
 // DWORD timeGetTime(void) is also similar to GetTickCount()...
 
 #ifndef DISABLE_TIMEGM_MKGMTIME
 #ifdef _WIN32
+#ifdef __GNUC__
+//#if !(((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
+// https://stackoverflow.com/questions/16647819/timegm-cross-platform
+//
+// Does not account for non-whole-hour offsets, for instance UTC?09:30, UTC+05:45, will fail
+// for time zones outside of +/-12 hours, will fail during hour when time zone is switched 
+// from summer to winter, there is an ambiguity at those hour in local time because the same
+// local hour is used twice per night...
+//inline time_t _mkgmtime(struct tm * a_tm)
+//{
+//	time_t ltime = mktime(a_tm);
+//	struct tm tm_val;
+//	gmtime_s(&tm_val, &ltime);
+//	int offset = (tm_val.tm_hour - a_tm->tm_hour);
+//	if (offset > 12)
+//	{
+//		offset = 24 - offset;
+//	}
+//	time_t utc = mktime(a_tm) - offset * 3600;
+//	return utc;
+//}
 
+inline int32_t __is_leap(int32_t year)
+{
+	if (year % 400 == 0)
+		return 1;
+	if (year % 100 == 0)
+		return 0;
+	if (year % 4 == 0)
+		return 1;
+	return 0;
+}
+
+inline int32_t __days_from_0(int32_t year)
+{
+	year--;
+	return 365 * year + (year / 400) - (year/100) + (year / 4);
+}
+
+inline int32_t __days_from_1970(int32_t year)
+{
+	int days_from_0_to_1970 = __days_from_0(1970);
+	return __days_from_0(year) - days_from_0_to_1970;
+}
+
+inline int32_t __days_from_1jan(int32_t year, int32_t month, int32_t day)
+{
+	static const int32_t days[2][12] =
+	{
+	  { 0,31,59,90,120,151,181,212,243,273,304,334},
+	  { 0,31,60,91,121,152,182,213,244,274,305,335}
+	};
+	return days[__is_leap(year)][month-1] + day - 1;
+}
+
+inline time_t timegm(struct tm * t)
+{
+	int year = t->tm_year + 1900;
+	int month = t->tm_mon;
+	if (month > 11)
+	{
+		year += month/12;
+		month %= 12;
+	}
+	else if (month < 0)
+	{
+		int years_diff = (-month + 11)/12;
+		year -= years_diff;
+		month += 12 * years_diff;
+	}
+	month++;
+	int day = t->tm_mday;
+	int day_of_year = __days_from_1jan(year, month, day);
+	int days_since_epoch = __days_from_1970(year) + day_of_year;
+
+	time_t seconds_in_day = 3600 * 24;
+	time_t result = seconds_in_day * days_since_epoch + 3600 * t->tm_hour + 60 * t->tm_min + t->tm_sec;
+
+	return result;
+}
+//#endif // !(((__GNUC__ == 4) && (__GNUC_MINOR__ >= 6)) || (__GNUC__ > 4))
+#else
 #ifndef WINCE
 #ifndef timegm
 #define timegm _mkgmtime
-#endif // timegm
+#endif // !timegm
 // timelocal() is a deprecated interface that is equivalent to calling mktime() with a negative value for tm_isdst...
 #ifndef timelocal
 #define timelocal mktime
-#endif // timelocal
-#endif // WINCE
-
+#endif // !timelocal
+#endif // !WINCE
+#endif // __GNUC__
 #else
-
 #ifndef _mkgmtime
 #define _mkgmtime timegm
-#endif // _mkgmtime
-
+#endif // !_mkgmtime
 #endif // _WIN32
-#endif // DISABLE_TIMEGM_MKGMTIME
+#endif // !DISABLE_TIMEGM_MKGMTIME
 
 /*
 Return a string like ctime() but in this format :
 
-Mon Aug 27 19:28:04 2007\0
+2007-08-27 19:28:04\0
 
 (without the "\n" of ctime()).
 Should not be used directly in concurrent threads as the string value returned might 
@@ -329,10 +413,25 @@ Return : This string.
 */
 EXTERN_C char* strtime_m(void);
 
+#if (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
 /*
 Return a string like ctime() but in this format :
 
-Mon_Aug_27_19h28min04sec_2007\0
+2007-08-27 19:28:04:00\0
+
+(without the "\n" of ctime()).
+Should not be used directly in concurrent threads as the string value returned might 
+be changed by another thread.
+
+Return : This string.
+*/
+EXTERN_C char* strtimeex_m(void);
+#endif // (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
+
+/*
+Return a string like ctime() but in this format :
+
+2007-08-27_19h28min04s\0
 
 (without the "\n", ":", " " of ctime() in order to be safely used in file names).
 Should not be used directly in concurrent threads as the string value returned might 
@@ -341,6 +440,21 @@ be changed by another thread.
 Return : This string.
 */
 EXTERN_C char* strtime_fns(void);
+
+#if (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
+/*
+Return a string like ctime() but in this format :
+
+2007-08-27_19h28min04s00\0
+
+(without the "\n", ":", " " of ctime() in order to be safely used in file names).
+Should not be used directly in concurrent threads as the string value returned might 
+be changed by another thread.
+
+Return : This string.
+*/
+EXTERN_C char* strtimeex_fns(void);
+#endif // (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
 
 /*
 Wait some time...
@@ -360,6 +474,38 @@ inline void mSleep(long Milliseconds)
 
 	req.tv_sec = Milliseconds/1000; // Seconds.
 	req.tv_nsec = (Milliseconds%1000)*1000000; // Additional nanoseconds.
+	nanosleep(&req, NULL);
+#endif // _WIN32
+}
+
+/*
+Wait some time...
+
+long Microseconds : (IN) Time to wait in us.
+
+Return : Nothing.
+*/
+inline void uSleep(long Microseconds)
+{
+#ifdef _WIN32
+	// From https://stackoverflow.com/questions/5801813/c-usleep-is-obsolete-workarounds-for-windows-mingw.
+	HANDLE timer;
+	LARGE_INTEGER ft;
+
+	ft.QuadPart = -(10*(LONGLONG)Microseconds); // Convert to 100 nanosecond interval, negative value indicates relative time.
+
+	timer = CreateWaitableTimer(NULL, TRUE, NULL);
+	SetWaitableTimer(timer, &ft, 0, NULL, NULL, FALSE);
+	//WaitForSingleObject(timer, INFINITE);
+	WaitForSingleObject(timer, (DWORD)(1+Microseconds/1000));
+	CloseHandle(timer);
+#else 
+	// usleep() is considered as obsolete.
+	//usleep(Microseconds);
+	struct timespec req;
+
+	req.tv_sec = Microseconds/1000000; // Seconds.
+	req.tv_nsec = (Microseconds%1000000)*1000; // Additional nanoseconds.
 	nanosleep(&req, NULL);
 #endif // _WIN32
 }
@@ -1022,7 +1168,9 @@ inline double StopChronoQuick(CHRONO* pChrono)
 }
 #endif // _WIN32
 #else
-#if defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
+// See https://stackoverflow.com/questions/43295845/is-the-clocks-per-sec-value-wrong-inside-a-virtual-machine
+#if (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
+//#if defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
 /*
 Start a chronometer.
 
@@ -1614,7 +1762,8 @@ inline double StopChronoQuick(CHRONO* pChrono)
 		return pChrono->Duration;
 	}
 }
-#endif // defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
-#endif // USE_OLD_CHRONO
+#endif // (defined(_WIN32) && (defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32))) || (!defined(_WIN32))
+//#endif // defined(ENABLE_GETTIMEOFDAY_WIN32) || defined(ENABLE_SYS_TIME_H_WIN32)
+#endif // !USE_OLD_CHRONO
 
-#endif // OSTIME_H
+#endif // !OSTIME_H
