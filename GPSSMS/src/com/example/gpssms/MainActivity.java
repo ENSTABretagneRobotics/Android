@@ -259,18 +259,26 @@ public class MainActivity extends Activity {
 	}
 
 	public String getDate() {
-		return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
-				.format(Calendar.getInstance().getTime());
+		try {
+			return new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.US)
+					.format(Calendar.getInstance().getTime());
+		} catch (Exception e) {
+			return "Unknown date";
+		}
 	}
 
 	public int getBatteryLevel() {
-		Intent batteryIntent = registerReceiver(null, new IntentFilter(
-				Intent.ACTION_BATTERY_CHANGED));
-		int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-		int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-		if ((level == -1) || (scale == -1)) {
+		try {
+			Intent batteryIntent = registerReceiver(null, new IntentFilter(
+					Intent.ACTION_BATTERY_CHANGED));
+			int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+			if ((level < 0) || (scale <= 0)) {
+				return -1;
+			}
+			return (int) (level * 100.0 / (double) scale);
+		} catch (Exception e) {
 			return -1;
 		}
-		return (int) (level * 100.0 / (double) scale);
 	}
 }
