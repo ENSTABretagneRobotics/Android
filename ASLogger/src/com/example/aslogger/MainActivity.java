@@ -12,7 +12,8 @@ import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
-import android.location.GpsStatus;
+//import android.location.GpsStatus;
+import android.location.OnNmeaMessageListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -30,7 +31,8 @@ public class MainActivity extends Activity {
 	private PowerManager.WakeLock pwl;
 
 	private LocationManager locationManager;
-	private GpsStatus.NmeaListener nmeaListener;
+	//private GpsStatus.NmeaListener nmeaListener;
+	private OnNmeaMessageListener onNmeaMessageListener;
 	private LocationListener locationListener;
 	private SensorManager sensorManager;
 	private Sensor orientation;
@@ -146,7 +148,7 @@ public class MainActivity extends Activity {
 
 		// Define a listener that responds to NMEA updates. NMEA is the
 		// low-level GPS protocol.
-		nmeaListener = new GpsStatus.NmeaListener() {
+		/*nmeaListener = new GpsStatus.NmeaListener() {
 			public void onNmeaReceived(long timestamp, String nmea) {
 
 				// Specific NMEA raw data file.
@@ -173,8 +175,38 @@ public class MainActivity extends Activity {
 		};
 
 		// Register the NMEA listener.
-		locationManager.addNmeaListener(nmeaListener);
+		locationManager.addNmeaListener(nmeaListener);*/
+		
+		onNmeaMessageListener = new OnNmeaMessageListener() {
+			public void onNmeaMessage(String nmea, long timestamp) {
 
+				// Specific NMEA raw data file.
+
+				// Get the directory for the user's public download directory.
+				File file = new File(
+						Environment
+								.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS),
+						"nmea.txt");
+				PrintWriter out = null;
+				try {
+					out = new PrintWriter(new BufferedWriter(new FileWriter(
+							file, true)));
+					out.println(nmea);
+				} catch (Exception e) {
+
+				} finally {
+					if (out != null) {
+						out.close();
+					}
+				}
+				nmeaTextView.setText(nmea);
+			}
+		};
+
+		// Register the NMEA listener.
+		//locationManager.addNmeaListener(Context.getMainExecutor(), onNmeaMessageListener);
+		locationManager.addNmeaListener(onNmeaMessageListener);
+		
 		// Define a listener that responds to location updates.
 		locationListener = new LocationListener() {
 			public void onLocationChanged(Location location) {
@@ -294,7 +326,8 @@ public class MainActivity extends Activity {
 		sensorManager.unregisterListener(gyroscopeListener);
 		sensorManager.unregisterListener(orientationListener);
 		locationManager.removeUpdates(locationListener);
-		locationManager.removeNmeaListener(nmeaListener);
+		locationManager.removeNmeaListener(onNmeaMessageListener);
+		//locationManager.removeNmeaListener(nmeaListener);
 		pwl.release();
 		sdwl.release();
 	}

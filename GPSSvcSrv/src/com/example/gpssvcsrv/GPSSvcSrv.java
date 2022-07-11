@@ -14,7 +14,8 @@ import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
-import android.location.GpsStatus;
+//import android.location.GpsStatus;
+import android.location.OnNmeaMessageListener;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
@@ -38,7 +39,8 @@ public class GPSSvcSrv extends Service {
 	private PowerManager.WakeLock pwl;
 	
 	private LocationManager locationManager;
-	private GpsStatus.NmeaListener nmeaListener;
+	//private GpsStatus.NmeaListener nmeaListener;
+	private OnNmeaMessageListener onNmeaMessageListener;
 	private LocationListener locationListener;
 
 	long utcMilliTime;
@@ -119,7 +121,7 @@ public class GPSSvcSrv extends Service {
 
 			// Define a listener that responds to NMEA updates. NMEA is the
 			// low-level GPS protocol.
-			nmeaListener = new GpsStatus.NmeaListener() {
+			/*nmeaListener = new GpsStatus.NmeaListener() {
 				public void onNmeaReceived(long timestamp, String nmea) {
 					latestdata[dataindex] = nmea;
 					dataindex++;
@@ -129,7 +131,21 @@ public class GPSSvcSrv extends Service {
 			};
 
 			// Register the NMEA listener.
-			locationManager.addNmeaListener(nmeaListener);
+			locationManager.addNmeaListener(nmeaListener);*/
+			
+			onNmeaMessageListener = new OnNmeaMessageListener() {
+				public void onNmeaMessage(String nmea, long timestamp) {
+					latestdata[dataindex] = nmea;
+					dataindex++;
+					dataindex = (dataindex%MAX_NB_NMEA_SENTENCES);
+					//Log.d(TAG, nmea);
+				}
+			};
+
+			// Register the NMEA listener.
+			//locationManager.addNmeaListener(Context.getMainExecutor(), onNmeaMessageListener);
+			locationManager.addNmeaListener(onNmeaMessageListener);
+			
 
 			// Define a listener that responds to location updates.
 			locationListener = new LocationListener() {
@@ -171,7 +187,8 @@ public class GPSSvcSrv extends Service {
 			}
 			
 			locationManager.removeUpdates(locationListener);
-			locationManager.removeNmeaListener(nmeaListener);
+			locationManager.removeNmeaListener(onNmeaMessageListener);
+			//locationManager.removeNmeaListener(nmeaListener);
 			
 			pwl.release();
 			sdwl.release();
