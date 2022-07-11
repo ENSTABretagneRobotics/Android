@@ -1,5 +1,11 @@
 attention aux caractères de fin de ligne dans les fichiers de config!
 
+NMEA marche pas sur ASUS Zenfone 8 (Android 12) : https://developer.android.com/reference/android/location/GpsStatus.NmeaListener deprecated, rajouter un bouton pour que l'utilisateur choisisse quel callback (default chosen automatically depending on Android version)...?
+
+notification.setLatestEventInfo() removed...
+
+add battery info to ASLogger?
+
 incompatibilité entre nouveaux projets hello world d'eclipse et notification, partir de projets existants...
 
 UART IOIO...
@@ -39,6 +45,8 @@ pourquoi dans buggy le fait de déplacer le nmeatextview en bas fait tout planter
 
 
 OLD
+
+GPSSMS marche pas sur HTC10 (Android 8 Oreo) au moment de l'envoi du SMS, éviter d'échouer complètement si except get bat ou get date?->check app authorizations and show suggestion about it->READ_PHONE_STATE...
 
 nmea: faire une file d'une certaine taille pour tout enregistrer?
 trames NMEA de HTC One M8s n'envoie pas assez souvent de GPGGA, RMC à cause de select timeout? comparer nmea.txt de aslogger...
