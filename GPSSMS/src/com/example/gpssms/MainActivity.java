@@ -268,17 +268,25 @@ public class MainActivity extends Activity {
 	}
 
 	public int getBatteryLevel() {
+		int level = -1;
+		int scale = -1;
 		try {
 			Intent batteryIntent = registerReceiver(null, new IntentFilter(
 					Intent.ACTION_BATTERY_CHANGED));
-			int level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
-			int scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
-			if ((level < 0) || (scale <= 0)) {
+			level = batteryIntent.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+			scale = batteryIntent.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+		} catch (Exception e) {
+			try {
+				BatteryManager batteryManager = (BatteryManager) getSystemService(Context.BATTERY_SERVICE);
+				level = batteryManager.getIntProperty(BatteryManager.BATTERY_PROPERTY_CAPACITY);
+				scale = 1;
+			} catch (Exception e2) {
 				return -1;
 			}
-			return (int) (level * 100.0 / (double) scale);
-		} catch (Exception e) {
+		}
+		if ((level < 0) || (scale <= 0)) {
 			return -1;
 		}
+		return (int) (level * 100.0 / (double) scale);
 	}
 }
