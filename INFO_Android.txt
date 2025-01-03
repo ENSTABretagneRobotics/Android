@@ -21,7 +21,7 @@ DashLight, Stopwatch (équivalents parfois intégrés dans Settings, Alarms)
 Wireless Mic pour communiquer en audio entre 2 smartphones en Wi-Fi sans Internet
 Google Maps/Chrome/Translate/YouTube/Docs/Slides/Sheets
 Microsoft OneNote/Outlook/Skype/RD Client/RD Client Beta/HERE Maps/Office Mobile/Office Lens/Office Remote/MSN Weather/MSN News (Translator, Word, PowerPoint, Excel... need at least Android 4.4)
-QR code i-nigma, QuickMark, Tag, Mobiletag, NeoReader, Barcode Scanner
+QR code i-nigma, QuickMark, Tag, Mobiletag, NeoReader, Barcode Scanner (appareil photo Android 12 lit QR codes...)
 
 MS RDP met une résolution de 1280*768 quelle que soit la résolution réelle du smartphone et c'est à peu près lisible
 
